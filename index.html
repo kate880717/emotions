@@ -325,6 +325,30 @@
         init();
       }, []);
 
+      /* ── TTS 자동 읽기 (🔊 켤 때 화면마다 자동 읽어줌) ──────────── */
+      useEffect(() => {
+        if (!soundOn) return;
+        if (phase === 'intro') {
+          speak('오늘의 약속. 나는 내 감정을 당당하게 말해요!', true);
+        } else if (phase === 'concept' && conceptList.length > 0) {
+          const em = conceptList[conceptIdx];
+          if (em) speak(`${em.sit}. 이럴 때 느끼는 감정은 바로 ${em.id}. ${em.desc}`, true);
+        } else if (phase === 'activity') {
+          const list = reviewMode ? wrong : qs;
+          const q = list[qIdx];
+          if (q) speak(q.q, true);
+        } else if (phase === 'wheel' && wheels.length > 0) {
+          const wq = wheels[wheelIdx];
+          if (wq) speak(`어울리는 마음을 찾아주세요. ${wq.sit}`, true);
+        } else if (phase === 'self_rating') {
+          speak('오늘 공부 어땠나요? 별표를 눌러 알려줘요!', true);
+        } else if (phase === 'recording') {
+          speak('나는 어떨 때 즐거운가요? 아래 버튼을 눌러 말해보세요!', true);
+        } else if (phase === 'report') {
+          speak('모험 대장증이 발급됐어요! 정말 잘했어요!', true);
+        }
+      }, [phase, conceptIdx, qIdx, wheelIdx, soundOn]);
+
       /* ── 마이크 사전 권한 요청 ─────────────────────────────────── */
       const requestMic = async () => {
         try {
