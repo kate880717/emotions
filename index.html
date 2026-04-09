@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -12,33 +13,107 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0; }
-    body { font-family: 'Outfit', 'Malgun Gothic', sans-serif; background: #dde3ee; }
-    #root { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-    #app {
-      width: 100%; max-width: 960px; height: 96vh; max-height: 860px;
-      display: flex; flex-direction: column; overflow: hidden;
-      background: linear-gradient(145deg, #fff9fb 0%, #f0f4ff 100%);
-      border-radius: 2.5rem; box-shadow: 0 30px 60px -15px rgba(0,0,0,0.25);
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
-    .card { background: #fff; border-radius: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
-    .card-pink   { border: 3px solid #fbcfe8; }
-    .card-indigo { border: 3px solid #c7d2fe; }
-    .card-amber  { border: 3px solid #fde68a; }
-    .word-keep { word-break: keep-all; }
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-    .float { animation: float 3.5s ease-in-out infinite; }
-    .btn { transition: transform .15s; cursor: pointer; }
-    .btn:active { transform: scale(.96); }
-    .scroll-y { overflow-y: auto; }
-    .scroll-y::-webkit-scrollbar { display: none; }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', 'Malgun Gothic', sans-serif;
+      background: #dde3ee;
+    }
+
+    #root {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 960px;
+      height: 96vh;
+      max-height: 860px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: linear-gradient(145deg, #fff9fb 0%, #f0f4ff 100%);
+      border-radius: 2.5rem;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.25);
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 2rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-pink {
+      border: 3px solid #fbcfe8;
+    }
+
+    .card-indigo {
+      border: 3px solid #c7d2fe;
+    }
+
+    .card-amber {
+      border: 3px solid #fde68a;
+    }
+
+    .word-keep {
+      word-break: keep-all;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-10px)
+      }
+    }
+
+    .float {
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    .btn {
+      transition: transform .15s;
+      cursor: pointer;
+    }
+
+    .btn:active {
+      transform: scale(.96);
+    }
+
+    .scroll-y {
+      overflow-y: auto;
+    }
+
+    .scroll-y::-webkit-scrollbar {
+      display: none;
+    }
   </style>
 
   <script>
     /* ── GAS 웹앱 URL ─────────────────────────────────────────── */
     /* GitHub Pages에서도 use GET request (query param) to avoid CORS */
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbywk36iYEQsSWDT2knZ8zONKI347I2IOuz3dcAE9kEtlkZRHtpURQzpRnbp4yak5zl22g/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyEFcjmrShw7x7Lyo4p75RZBA4VYDb9xShsd-3wcJ8DDJvbwXUXgwU1ZQoKgEY3ReSJ4g/exec";
 
     /* ── GAS 호출 헬퍼: GET=조회, POST=저장 ──────────────────────
        GitHub Pages → GET 방식은 GAS redirect 이후 응답을 읽을 수 없어서
@@ -48,7 +123,7 @@
         const r = await fetch(`${GAS_URL}?action=${action}`, { redirect: 'follow' });
         const text = await r.text();
         return JSON.parse(text);
-      } catch(_) { return null; }
+      } catch (_) { return null; }
     };
     const gasPost = async (data) => {
       try {
@@ -57,7 +132,7 @@
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(data)
         });
-      } catch(_) {}
+      } catch (_) { }
     };
 
     /* ── 기본 학생 목록 (시트 연결 안 되면 사용) ─────────────────── */
@@ -65,31 +140,31 @@
 
     /* ── 감정 DB ──────────────────────────────────────────────── */
     const EMOTION_DB = [
-      {id:'기쁘다',       cat:'pos', emoji:'😄', hanja:'',    desc:'원하던 일이 생겨서 마음이 참 즐거워요.',                  sit:'시험에서 100점을 받았을 때'},
-      {id:'슬프다',       cat:'neg', emoji:'😢', hanja:'',    desc:'마음이 아프고 눈물이 날 것만 같은 느낌이에요.',           sit:'소중한 인형을 잃어버렸을 때'},
-      {id:'뿌듯하다',     cat:'pos', emoji:'💪', hanja:'',    desc:'해야 할 일을 멋지게 해내어 기분이 꽉 찬 느낌이에요.',    sit:'어려운 퍼즐을 나 혼자 다 맞췄을 때'},
-      {id:'설레다',       cat:'pos', emoji:'💓', hanja:'',    desc:'기대되는 일 때문에 가슴이 두근대고 떨려요.',             sit:'내일 소풍 간다는 소식을 들었을 때'},
-      {id:'뭉클하다',     cat:'pos', emoji:'💖', hanja:'',    desc:'따뜻한 감동이 가슴속에서 울컥 솟아오르는 느낌이에요.',   sit:'선생님의 정성 어린 편지를 읽었을 때'},
-      {id:'개운하다',     cat:'pos', emoji:'🛁', hanja:'',    desc:'몸이나 마음이 맑고 시원해져서 기분이 가벼워요.',         sit:'운동 후 깨끗하게 씻고 나왔을 때'},
-      {id:'안심되다',     cat:'pos', emoji:'😌', hanja:'安心', desc:'걱정하던 일이 사라져서 마음이 푹 놓여요.',              sit:'길을 잃었다가 엄마를 다시 만났을 때'},
-      {id:'어색하다',     cat:'neg', emoji:'😅', hanja:'語塞', desc:'지내는 분위기가 서먹서먹하고 불편한 느낌이에요.',        sit:'처음 본 친구와 단둘이 짝이 되었을 때'},
-      {id:'무섭다',       cat:'neg', emoji:'👻', hanja:'',    desc:'위험을 느끼거나 나쁜 일이 생길까 봐 두려워요.',           sit:'갑자기 불이 꺼지고 천둥소리가 들릴 때'},
-      {id:'조마조마하다', cat:'neg', emoji:'😨', hanja:'',    desc:'무언가 잘못될까 봐 마음이 불안하고 떨려요.',             sit:'발표 순서를 기다리며 내 차례가 다가올 때'},
-      {id:'자랑스럽다',   cat:'pos', emoji:'🏅', hanja:'',    desc:'내가 한 일이 대단해서 스스로가 참 훌륭하다고 느껴요.',   sit:'발표를 아주 잘해서 선생님께 칭찬받았을 때'},
-      {id:'속상하다',     cat:'neg', emoji:'😥', hanja:'',    desc:'일이 마음대로 되지 않아 화가 나고 슬픈 상태예요.',        sit:'열심히 만든 모래성이 무너졌을 때'},
-      {id:'억울하다',     cat:'neg', emoji:'😩', hanja:'抑鬱', desc:'잘못하지 않았는데 오해나 비난을 받아 답답하고 화나요.',  sit:'내가 안 그랬는데 범인으로 의심받았을 때'},
+      { id: '기쁘다', cat: 'pos', emoji: '😄', hanja: '', desc: '원하던 일이 생겨서 마음이 참 즐거워요.', sit: '시험에서 100점을 받았을 때' },
+      { id: '슬프다', cat: 'neg', emoji: '😢', hanja: '', desc: '마음이 아프고 눈물이 날 것만 같은 느낌이에요.', sit: '소중한 인형을 잃어버렸을 때' },
+      { id: '뿌듯하다', cat: 'pos', emoji: '💪', hanja: '', desc: '해야 할 일을 멋지게 해내어 기분이 꽉 찬 느낌이에요.', sit: '어려운 퍼즐을 나 혼자 다 맞췄을 때' },
+      { id: '설레다', cat: 'pos', emoji: '💓', hanja: '', desc: '기대되는 일 때문에 가슴이 두근대고 떨려요.', sit: '내일 소풍 간다는 소식을 들었을 때' },
+      { id: '뭉클하다', cat: 'pos', emoji: '💖', hanja: '', desc: '따뜻한 감동이 가슴속에서 울컥 솟아오르는 느낌이에요.', sit: '선생님의 정성 어린 편지를 읽었을 때' },
+      { id: '개운하다', cat: 'pos', emoji: '🛁', hanja: '', desc: '몸이나 마음이 맑고 시원해져서 기분이 가벼워요.', sit: '운동 후 깨끗하게 씻고 나왔을 때' },
+      { id: '안심되다', cat: 'pos', emoji: '😌', hanja: '安心', desc: '걱정하던 일이 사라져서 마음이 푹 놓여요.', sit: '길을 잃었다가 엄마를 다시 만났을 때' },
+      { id: '어색하다', cat: 'neg', emoji: '😅', hanja: '語塞', desc: '지내는 분위기가 서먹서먹하고 불편한 느낌이에요.', sit: '처음 본 친구와 단둘이 짝이 되었을 때' },
+      { id: '무섭다', cat: 'neg', emoji: '👻', hanja: '', desc: '위험을 느끼거나 나쁜 일이 생길까 봐 두려워요.', sit: '갑자기 불이 꺼지고 천둥소리가 들릴 때' },
+      { id: '조마조마하다', cat: 'neg', emoji: '😨', hanja: '', desc: '무언가 잘못될까 봐 마음이 불안하고 떨려요.', sit: '발표 순서를 기다리며 내 차례가 다가올 때' },
+      { id: '자랑스럽다', cat: 'pos', emoji: '🏅', hanja: '', desc: '내가 한 일이 대단해서 스스로가 참 훌륭하다고 느껴요.', sit: '발표를 아주 잘해서 선생님께 칭찬받았을 때' },
+      { id: '속상하다', cat: 'neg', emoji: '😥', hanja: '', desc: '일이 마음대로 되지 않아 화가 나고 슬픈 상태예요.', sit: '열심히 만든 모래성이 무너졌을 때' },
+      { id: '억울하다', cat: 'neg', emoji: '😩', hanja: '抑鬱', desc: '잘못하지 않았는데 오해나 비난을 받아 답답하고 화나요.', sit: '내가 안 그랬는데 범인으로 의심받았을 때' },
     ];
 
     /* ── 퀴즈 문제 ─────────────────────────────────────────────── */
     const QUIZ_Q = [
-      {id:1, q:'받고 싶던 선물을 받았을 때 기분은?',         img:'🎁', opts:['기쁘다','슬프다'],     a:'기쁘다',    fb:'원하던 것이 생기면 기쁜 마음이 가득해요!'},
-      {id:2, q:'엄마한테 꾸중을 들어서 눈물이 나요.',         img:'😢', opts:['뿌듯하다','슬프다'],   a:'슬프다',    fb:'슬플 때는 참지 말고 마음을 달래주는 게 중요해요.'},
-      {id:3, q:'나 혼자 어려운 수학 문제를 다 풀었어요!',     img:'📒', opts:['뿌듯하다','무섭다'],   a:'뿌듯하다',  fb:'스스로의 힘으로 해내면 뿌듯함이 솟아나요.'},
-      {id:4, q:'친구가 나를 비웃어서 마음이 아파요.',         img:'💔', opts:['설레다','속상하다'],   a:'속상하다',  fb:'다른 사람의 말에 상처를 받으면 속상해요.'},
-      {id:5, q:'선생님이 주신 따뜻한 편지를 읽었어요.',       img:'💌', opts:['뭉클하다','무섭다'],   a:'뭉클하다',  fb:'가슴 속 따뜻한 감동이 느껴지는 걸 "뭉클하다"고 해요.'},
-      {id:6, q:'내가 안 했는데 내가 한 거라고 오해받았어요.', img:'🤔', opts:['억울하다','개운하다'], a:'억울하다',  fb:'진심을 몰라줄 때 가장 억울한 마음이 들죠.'},
-      {id:7, q:'처음 보는 친구와 짝꿍이 되었어요.',           img:'👬', opts:['어색하다','기쁘다'],   a:'어색하다',  fb:'아직 친하지 않을 때는 어색할 수 있어요.'},
-      {id:8, q:'멋진 그림을 그려서 교실에 붙여졌어요!',       img:'🎨', opts:['자랑스럽다','무섭다'], a:'자랑스럽다', fb:'노력으로 좋은 결과가 나오면 자랑스러운 마음이 생겨요.'},
+      { id: 1, q: '받고 싶던 선물을 받았을 때 기분은?', img: '🎁', opts: ['기쁘다', '슬프다'], a: '기쁘다', fb: '원하던 것이 생기면 기쁜 마음이 가득해요!' },
+      { id: 2, q: '엄마한테 꾸중을 들어서 눈물이 나요.', img: '😢', opts: ['뿌듯하다', '슬프다'], a: '슬프다', fb: '슬플 때는 참지 말고 마음을 달래주는 게 중요해요.' },
+      { id: 3, q: '나 혼자 어려운 수학 문제를 다 풀었어요!', img: '📒', opts: ['뿌듯하다', '무섭다'], a: '뿌듯하다', fb: '스스로의 힘으로 해내면 뿌듯함이 솟아나요.' },
+      { id: 4, q: '친구가 나를 비웃어서 마음이 아파요.', img: '💔', opts: ['설레다', '속상하다'], a: '속상하다', fb: '다른 사람의 말에 상처를 받으면 속상해요.' },
+      { id: 5, q: '선생님이 주신 따뜻한 편지를 읽었어요.', img: '💌', opts: ['뭉클하다', '무섭다'], a: '뭉클하다', fb: '가슴 속 따뜻한 감동이 느껴지는 걸 "뭉클하다"고 해요.' },
+      { id: 6, q: '내가 안 했는데 내가 한 거라고 오해받았어요.', img: '🤔', opts: ['억울하다', '개운하다'], a: '억울하다', fb: '진심을 몰라줄 때 가장 억울한 마음이 들죠.' },
+      { id: 7, q: '처음 보는 친구와 짝꿍이 되었어요.', img: '👬', opts: ['어색하다', '기쁘다'], a: '어색하다', fb: '아직 친하지 않을 때는 어색할 수 있어요.' },
+      { id: 8, q: '멋진 그림을 그려서 교실에 붙여졌어요!', img: '🎨', opts: ['자랑스럽다', '무섭다'], a: '자랑스럽다', fb: '노력으로 좋은 결과가 나오면 자랑스러운 마음이 생겨요.' },
     ];
 
     /* ── TTS ─────────────────────────────────────────────────── */
@@ -107,9 +182,9 @@
       cv.width = 1200; cv.height = 1500;
       const ctx = cv.getContext('2d');
       // 배경
-      ctx.fillStyle = '#fffcf4'; ctx.fillRect(0,0,1200,1500);
-      ctx.strokeStyle = '#f472b6'; ctx.lineWidth = 40; ctx.strokeRect(40,40,1120,1420);
-      ctx.strokeStyle = '#fce7f3'; ctx.lineWidth = 15; ctx.strokeRect(70,70,1060,1360);
+      ctx.fillStyle = '#fffcf4'; ctx.fillRect(0, 0, 1200, 1500);
+      ctx.strokeStyle = '#f472b6'; ctx.lineWidth = 40; ctx.strokeRect(40, 40, 1120, 1420);
+      ctx.strokeStyle = '#fce7f3'; ctx.lineWidth = 15; ctx.strokeRect(70, 70, 1060, 1360);
       // 제목
       ctx.textAlign = 'center';
       ctx.font = 'bold 100px sans-serif'; ctx.fillStyle = '#db2777';
@@ -121,7 +196,7 @@
       ctx.fillText(`${name} 어린이`, 600, 580);
       // 본문
       ctx.font = '50px sans-serif'; ctx.fillStyle = '#475569';
-      ['위 어린이는 용기 있게 마음의 보물을 찾아', '자신의 감정을 바르게 표현하는 힘을 길렀기에', '이 증서를 수여하며 칭찬합니다.'].forEach((l,i) => ctx.fillText(l, 600, 780 + i*90));
+      ['위 어린이는 용기 있게 마음의 보물을 찾아', '자신의 감정을 바르게 표현하는 힘을 길렀기에', '이 증서를 수여하며 칭찬합니다.'].forEach((l, i) => ctx.fillText(l, 600, 780 + i * 90));
       // 이모지
       ctx.font = '150px serif'; ctx.fillText('⭐🏅⭐', 600, 1150);
       // 날짜
@@ -136,585 +211,591 @@
     };
   </script>
 </head>
+
 <body>
-<div id="root"><div id="app"></div></div>
-
-<script type="text/babel">
-const { useState, useEffect, useRef, useCallback } = React;
-
-/* ── 아이콘 ─────────────────────────────────────────────────── */
-const HomeIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-    <polyline points="9 22 9 12 15 12 15 22"/>
-  </svg>
-);
-
-/* ── 상단 헤더 (한글 레이블) ─────────────────────────────────── */
-const Header = ({ label, soundOn, toggleSound }) => (
-  <div className="flex items-center justify-between px-6 py-4 shrink-0">
-    <div className="flex items-center gap-3">
-      <button onClick={() => window.location.reload()}
-        className="btn flex items-center justify-center w-10 h-10 bg-white rounded-xl border-2 border-slate-100 text-slate-400 shadow-sm">
-        <HomeIcon />
-      </button>
-      <span className="text-base font-black text-slate-400 bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm">
-        {label}
-      </span>
-    </div>
-    <button onClick={toggleSound}
-      className={`btn w-12 h-12 rounded-xl border-2 shadow-sm text-2xl
-        ${soundOn ? 'bg-pink-100 text-pink-500 border-pink-200' : 'bg-white text-slate-300 border-slate-100'}`}>
-      {soundOn ? '🔊' : '🔇'}
-    </button>
+  <div id="root">
+    <div id="app"></div>
   </div>
-);
 
-/* ── 마스코트 ─────────────────────────────────────────────────── */
-const Mascot = ({ size = 90 }) => (
-  <svg width={size} height={size * 1.2} viewBox="0 0 100 120" fill="none">
-    <circle cx="50" cy="70" r="38" fill="white" stroke="#f472b6" strokeWidth="4.5"/>
-    <path d="M34 20 L36 43" stroke="#f472b6" strokeWidth="9" strokeLinecap="round"/>
-    <path d="M66 20 L64 43" stroke="#f472b6" strokeWidth="9" strokeLinecap="round"/>
-    <circle cx="40" cy="68" r="3.5" fill="#1e293b"/>
-    <circle cx="60" cy="68" r="3.5" fill="#1e293b"/>
-    <path d="M43 85 Q50 92 57 85" stroke="#f472b6" strokeWidth="2.5" strokeLinecap="round"/>
-  </svg>
-);
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
 
-/* ══════════════════════════════════════════════════════════════
-   앱 본체
-══════════════════════════════════════════════════════════════ */
-const App = () => {
-  const [phase,       setPhase]       = useState('loading');
-  const [students,    setStudents]    = useState([]);
-  const [student,     setStudent]     = useState('');
-  const [soundOn,     setSoundOn]     = useState(false);
-  const [micReady,    setMicReady]    = useState(false); // 마이크 사전 권한
-
-  // 개념 학습
-  const [conceptList, setConceptList] = useState([]);
-  const [conceptIdx,  setConceptIdx]  = useState(0);
-
-  // 퀴즈
-  const [qs,          setQs]          = useState([]);
-  const [qIdx,        setQIdx]        = useState(0);
-  const [fb,          setFb]          = useState(null);
-  const [wrong,       setWrong]       = useState([]);
-  const [history,     setHistory]     = useState([]);
-  const [reviewMode,  setReviewMode]  = useState(false);
-
-  // 감정 톺아보기
-  const [wheels,      setWheels]      = useState([]);
-  const [wheelIdx,    setWheelIdx]    = useState(0);
-  const [wSel,        setWSel]        = useState(null);
-  const [wFb,         setWFb]         = useState(null);
-
-  // 별점 & 녹음
-  const [stars,       setStars]       = useState(0);
-  const [recStep,     setRecStep]     = useState('idle');
-  const [audioUrl,    setAudioUrl]    = useState(null);
-  const [audioB64,    setAudioB64]    = useState(null);
-  const [saving,      setSaving]      = useState(false);
-  const [saved,       setSaved]       = useState(false); // 중복 저장 방지
-
-  const mrRef     = useRef(null);
-  const chunksRef = useRef([]);
-
-  /* ── 초기 로드 ─────────────────────────────────────────────── */
-  useEffect(() => {
-    const init = async () => {
-      let names = SAMPLES;
-      if (window.google?.script?.run) {
-        names = await new Promise(res =>
-          window.google.script.run
-            .withSuccessHandler(l => res(l && l.length > 0 ? l : SAMPLES))
-            .withFailureHandler(() => res(SAMPLES))
-            .getStudentList()
-        );
-      } else if (GAS_URL) {
-        try {
-          const data = await gasGet('getStudentList');
-          if (Array.isArray(data) && data.length > 0) names = data;
-        } catch(_) {}
-      }
-      setStudents(names); setStudent(names[0]);
-      setPhase('start');
-    };
-    init();
-  }, []);
-
-  /* ── 마이크 사전 권한 요청 ─────────────────────────────────── */
-  const requestMic = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach(t => t.stop()); // 바로 닫아서 불필요한 녹음 방지
-      setMicReady(true);
-    } catch(_) {
-      alert('마이크 권한이 없습니다. 브라우저 설정에서 허용해 주세요.');
-    }
-  };
-
-  /* ── 레벨 선택 ────────────────────────────────────────────── */
-  const handleLevel = useCallback((count) => {
-    const shuffled = [...QUIZ_Q].sort(() => Math.random() - .5)
-      .slice(0, Math.min(count, QUIZ_Q.length))
-      .map(q => ({ ...q, opts: [...q.opts].sort(() => Math.random() - .5) }));
-    setQs(shuffled);
-
-    const must = EMOTION_DB.find(e => e.id === '뭉클하다');
-    const rest  = EMOTION_DB.filter(e => e.id !== '뭉클하다').sort(() => Math.random() - .5).slice(0, 2);
-    setConceptList([must, ...rest].sort(() => Math.random() - .5));
-
-    const wqs = [...EMOTION_DB].sort(() => Math.random() - .5).slice(0, 3).map(e => {
-      const opp = e.cat === 'pos' ? 'neg' : 'pos';
-      const dis = EMOTION_DB.filter(x => x.cat === opp).sort(() => Math.random() - .5).slice(0, 2).map(x => x.id);
-      return { sit: e.sit, correct: e.id, choices: [e.id, ...dis].sort(() => Math.random() - .5) };
-    });
-    setWheels(wqs);
-
-    setQIdx(0); setFb(null); setWrong([]); setHistory([]);
-    setReviewMode(false); setWheelIdx(0); setWSel(null); setWFb(null);
-    setStars(0); setRecStep('idle'); setAudioUrl(null); setAudioB64(null); setSaved(false);
-    setPhase('concept'); setConceptIdx(0);
-  }, []);
-
-  /* ── 퀴즈 ─────────────────────────────────────────────────── */
-  const checkAns = useCallback((ua) => {
-    const list = reviewMode ? wrong : qs;
-    const q    = list[qIdx];
-    const ok   = ua === q.a;
-    if (!reviewMode) setHistory(h => [...h, { id: q.id, ok, concept: q.a }]);
-    if (ok) {
-      setFb({ ok: true, msg: q.fb });
-      if (reviewMode) setWrong(w => w.filter(x => x.id !== q.id));
-      confetti({ particleCount: 80, spread: 55, origin: { y: .65 } });
-    } else {
-      setFb({ ok: false });
-      if (!wrong.find(x => x.id === q.id)) setWrong(w => [...w, q]);
-    }
-  }, [reviewMode, wrong, qs, qIdx]);
-
-  const nextQ = useCallback(() => {
-    const list = reviewMode ? wrong : qs;
-    setFb(null);
-    if (qIdx < list.length - 1) setQIdx(q => q + 1);
-    else if (reviewMode || wrong.length === 0) setPhase('wheel');
-    else setPhase('재도전안내');
-  }, [reviewMode, wrong, qs, qIdx]);
-
-  /* ── 녹음 ─────────────────────────────────────────────────── */
-  const startRec = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mr = new MediaRecorder(stream);
-      mrRef.current = mr; chunksRef.current = [];
-      mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-      mr.onstop = () => {
-        stream.getTracks().forEach(t => t.stop()); // 스트림 정리
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        setAudioUrl(URL.createObjectURL(blob));
-        const fr = new FileReader();
-        fr.readAsDataURL(blob);
-        fr.onloadend = () => { setAudioB64(fr.result.split(',')[1]); setRecStep('done'); };
-      };
-      mr.start(); setRecStep('rec');
-    } catch (_) { alert('마이크를 사용할 수 없어요!'); }
-  };
-
-  const stopRec = () => {
-    if (mrRef.current && mrRef.current.state !== 'inactive') mrRef.current.stop();
-  };
-
-  /* ── 결과 저장 (1회만) ────────────────────────────────────── */
-  const saveResult = async () => {
-    if (saved) { setPhase('report'); return; }
-    setSaving(true); setSaved(true);
-    const learned = [...new Set(history.filter(h => h.ok).map(h => h.concept))];
-    const payload = { name: student, total: qs.length, correct: history.filter(h => h.ok).length,
-                      emotions: learned, rating: stars, audioBase64: audioB64 };
-    if (window.google?.script?.run) {
-      window.google.script.run.saveRecord(payload);
-    } else if (GAS_URL) {
-      await gasPost(payload);
-    }
-    setSaving(false); setPhase('report');
-  };
-
-  const toggleSound = () => setSoundOn(s => !s);
-
-  /* ══════════════════════════════════════════════════════════════
-     화면 렌더링
-  ══════════════════════════════════════════════════════════════ */
-
-  /* 로딩 */
-  if (phase === 'loading') return (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="w-14 h-14 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin"/>
-    </div>
-  );
-
-  /* ── 시작 화면 ─────────────────────────────────────────────── */
-  if (phase === 'start') return (
-    <div className="w-full h-full flex flex-col items-center justify-center p-8 relative overflow-hidden"
-         style={{background:'linear-gradient(145deg,#fff9fb 0%,#f0f4ff 100%)'}}>
-      <div className="absolute top-8 left-8 text-7xl opacity-10 float">🍭</div>
-      <div className="absolute bottom-16 right-8 text-8xl opacity-10 float" style={{animationDelay:'.8s'}}>🌈</div>
-      <Mascot size={110}/>
-      <h1 className="text-5xl font-black text-slate-900 mt-5 mb-2 tracking-tight">
-        감정 알기 <span className="text-pink-500">대모험</span> ✨
-      </h1>
-      <p className="text-lg font-bold text-slate-400 mb-10">내 마음 속 반짝이는 보물을 찾아요!</p>
-
-      <div className="card card-pink w-full max-w-sm p-8 shadow-xl">
-        <p className="text-center text-sm font-black text-pink-400 tracking-widest mb-4">내 이름을 선택해요</p>
-        <select value={student} onChange={e => setStudent(e.target.value)}
-          className="w-full p-4 mb-5 bg-slate-50 border-2 border-slate-100 rounded-2xl text-2xl font-black text-slate-800 text-center focus:outline-none focus:border-pink-300">
-          {students.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-
-        {/* 🎙️ 마이크 사전 권한 요청 버튼 */}
-        {!micReady ? (
-          <button onClick={requestMic}
-            className="btn w-full py-4 mb-4 bg-rose-50 text-rose-600 border-2 border-rose-200 rounded-2xl font-black text-xl">
-            🎙️ 마이크 준비하기 (녹음용)
-          </button>
-        ) : (
-          <p className="text-center text-emerald-600 font-black text-lg mb-4">✅ 마이크 준비 완료!</p>
-        )}
-
-        <button onClick={() => { speak(`안녕하세요 ${student}!`, soundOn); setPhase('intro'); }}
-          className="btn w-full py-5 bg-pink-500 text-white rounded-2xl font-black text-3xl shadow-lg hover:bg-pink-600">
-          시작하기 ▶
-        </button>
-      </div>
-    </div>
-  );
-
-  /* ── 인트로 ────────────────────────────────────────────────── */
-  if (phase === 'intro') return (
-    <div className="w-full h-full flex flex-col" style={{background:'#fff9fa'}}>
-      <Header label="🌸 시작" soundOn={soundOn} toggleSound={toggleSound}/>
-      <div className="flex-1 flex flex-col items-center justify-center text-center px-10">
-        <div className="inline-block bg-pink-100 text-pink-600 font-black text-base px-4 py-2 rounded-full mb-6">🌱 오늘의 약속</div>
-        <h2 className="text-4xl font-black text-slate-800 mb-8 leading-snug">
-          "나는 내 감정을<br/>당당하게 말해요!"
-        </h2>
-        <div className="card card-pink p-8 max-w-lg mb-10 text-xl font-bold text-slate-500 leading-relaxed word-keep italic">
-          기쁠 때는 웃고, 슬플 때는 말하고,<br/>어려울 때는 도움을 청하는 용기 있는 어린이가 될래요!
-        </div>
-        <button onClick={() => setPhase('level_select')}
-          className="btn w-full max-w-xs py-5 bg-pink-500 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-pink-600">
-          도전하기 ➡️
-        </button>
-      </div>
-    </div>
-  );
-
-  /* ── 레벨 선택 ─────────────────────────────────────────────── */
-  if (phase === 'level_select') return (
-    <div className="w-full h-full flex flex-col bg-white">
-      <Header label="📚 문제 수 선택" soundOn={soundOn} toggleSound={toggleSound}/>
-      <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-        <h2 className="text-3xl font-black text-slate-800 mb-10">몇 조각의 보물을 찾을까요?</h2>
-        <div className="flex flex-col gap-5 w-full max-w-xs">
-          {[5,10,15].map((n,i) => (
-            <button key={n} onClick={() => handleLevel(n)}
-              className="btn py-6 bg-white border-4 border-pink-100 hover:border-pink-400 rounded-3xl text-3xl font-black text-pink-500 shadow-md flex items-center justify-between px-8">
-              <span>{n} 조각 찾기</span>
-              <span>{['🌱','🌿','🌳'][i]}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  /* ── 개념 학습 ─────────────────────────────────────────────── */
-  if (phase === 'concept') {
-    const em = conceptList[conceptIdx] || EMOTION_DB[0];
-    return (
-      <div className="w-full h-full flex flex-col" style={{background:'#f8fbff'}}>
-        <Header label={`💡 감정 배우기 ${conceptIdx+1}/3`} soundOn={soundOn} toggleSound={toggleSound}/>
-        <div className="flex-1 flex flex-col items-center justify-center px-6 py-2">
-          <div className="card card-indigo w-full max-w-2xl p-8 flex flex-col items-center text-center">
-            {/* 태그 */}
-            <div className="flex gap-2 mb-5 flex-wrap justify-center">
-              {em.hanja && <span className="bg-slate-700 text-white text-sm font-bold px-3 py-1 rounded-lg">한자: {em.hanja}</span>}
-              <span className={`text-sm font-black px-3 py-1 rounded-lg ${em.cat==='pos'?'bg-amber-100 text-amber-700':'bg-slate-100 text-slate-500'}`}>
-                {em.cat==='pos' ? '☀️ 긍정적인 마음' : '☁️ 힘든 마음'}
-              </span>
-            </div>
-            {/* 상황 */}
-            <div className="bg-indigo-50 border-2 border-indigo-100 rounded-2xl p-5 mb-6 w-full">
-              <p className="text-2xl font-bold text-slate-700 italic">"{em.sit}"</p>
-            </div>
-            {/* 이모지 + 단어 */}
-            <div className="text-[90px] mb-3 float">{em.emoji}</div>
-            <h3 className="text-5xl font-black text-indigo-600 mb-3">"{em.id}"</h3>
-            <p className="text-xl font-bold text-slate-400 word-keep max-w-sm">{em.desc}</p>
-          </div>
-          {/* 가시성 보장: 진한 인디고 + 흰 글자 */}
-          <button onClick={() => { if (conceptIdx < 2) setConceptIdx(c => c+1); else { setQIdx(0); setPhase('activity'); } }}
-            className="btn mt-6 w-full max-w-2xl py-6 rounded-2xl font-black text-2xl shadow-lg text-white"
-            style={{backgroundColor:'#4338ca'}}>
-            {conceptIdx < 2 ? '다음 설명 보기 ➡️' : '퀴즈 시작하기! 🎯'}
-          </button>
-        </div>
-      </div>
+    /* ── 아이콘 ─────────────────────────────────────────────────── */
+    const HomeIcon = () => (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
     );
-  }
 
-  /* ── 퀴즈 ──────────────────────────────────────────────────── */
-  if (phase === 'activity') {
-    const list = reviewMode ? wrong : qs;
-    const q    = list[qIdx];
-    if (!q) { setPhase('wheel'); return null; }
-
-    return (
-      <div className="w-full h-full flex flex-col bg-white">
-        <Header label={reviewMode ? '🔄 다시 풀기' : '🧩 감정 퀴즈'} soundOn={soundOn} toggleSound={toggleSound}/>
-        <div className="flex-1 flex flex-col items-center justify-center px-6">
-          <div className="card card-pink w-full max-w-2xl p-10 text-center">
-            {!fb ? (
-              <>
-                <div className="text-[90px] mb-5">{q.img}</div>
-                <h2 className="text-3xl font-black text-slate-800 mb-8 word-keep">"{q.q}"</h2>
-                <div className="grid grid-cols-2 gap-5">
-                  {q.opts.map((o,i) => (
-                    <button key={i} onClick={() => checkAns(o)}
-                      className="btn py-6 bg-slate-50 border-2 border-slate-100 hover:border-pink-400 hover:bg-pink-50 rounded-3xl text-3xl font-black text-slate-700 shadow-sm">
-                      {o}
-                    </button>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="text-[90px] mb-4">{fb.ok ? '🌟' : '🧐'}</div>
-                <h2 className={`text-4xl font-black mb-5 ${fb.ok ? 'text-emerald-500' : 'text-amber-500'}`}>
-                  {fb.ok ? '정답이에요!' : '다시 해볼까요?'}
-                </h2>
-                {fb.ok && <div className="bg-emerald-50 border-2 border-emerald-100 rounded-2xl p-5 mb-6 text-xl font-bold text-slate-600 italic">{fb.msg}</div>}
-                <button onClick={fb.ok ? nextQ : () => setFb(null)}
-                  className={`btn w-full py-5 rounded-2xl font-black text-2xl text-white shadow-lg ${fb.ok ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-amber-400 hover:bg-amber-500'}`}>
-                  {fb.ok ? '다음 문제로 ▶' : '다시 선택하기'}
-                </button>
-              </>
-            )}
-          </div>
-          <p className="mt-5 text-base font-black text-slate-300">{qIdx+1} / {list.length}</p>
-        </div>
-      </div>
-    );
-  }
-
-  /* ── 재도전 안내 ─────────────────────────────────────────────── */
-  if (phase === '재도전안내') return (
-    <div className="w-full h-full flex flex-col">
-      <Header label="💡 한번 더!" soundOn={soundOn} toggleSound={toggleSound}/>
-      <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
-        <div className="text-[110px] mb-6">💡</div>
-        <h2 className="text-3xl font-black text-slate-800 mb-4">포기하지 않는 마음이<br/>제일 멋져요!</h2>
-        <p className="text-xl font-bold text-slate-400 mb-10">아쉬운 문제들을 다시 한번 풀어볼까요?</p>
-        <button onClick={() => { setReviewMode(true); setQIdx(0); setFb(null); setPhase('activity'); }}
-          className="btn py-5 px-12 bg-orange-500 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-orange-600">
-          🔄 다시 도전!
-        </button>
-      </div>
-    </div>
-  );
-
-  /* ── 감정 톺아보기 ─────────────────────────────────────────── */
-  if (phase === 'wheel') {
-    const wq = wheels[wheelIdx];
-    if (!wq) { setPhase('self_rating'); return null; }
-
-    return (
-      <div className="w-full h-full flex flex-col" style={{background:'#fffef5'}}>
-        <Header label={`🌈 상황 퀴즈 ${wheelIdx+1}/3`} soundOn={soundOn} toggleSound={toggleSound}/>
-        <div className="flex-1 flex flex-col items-center justify-center px-6">
-          <div className="card card-amber w-full max-w-2xl p-8 text-center">
-            {/* 크게 표시 */}
-            <p className="text-2xl font-black text-amber-600 mb-5">💛 어울리는 마음을 찾아주세요!</p>
-            <div className="bg-amber-50 border-2 border-amber-100 rounded-2xl p-6 mb-8">
-              <p className="text-2xl font-black text-slate-700 italic">"{wq.sit}"</p>
-            </div>
-            <div className="grid grid-cols-3 gap-4 mb-8">
-              {wq.choices.map((c,i) => {
-                const em = EMOTION_DB.find(e => e.id === c) || {};
-                return (
-                  <button key={i} onClick={() => { setWSel(c); setWFb(null); }}
-                    className={`btn p-5 rounded-2xl border-4 flex flex-col items-center gap-2 transition-all
-                      ${wSel===c ? 'border-amber-500 bg-amber-50 scale-105' : 'border-slate-50 bg-white'}`}>
-                    <span className="text-5xl">{em.emoji || '✨'}</span>
-                    <span className="text-xl font-black text-slate-700">{c}</span>
-                  </button>
-                );
-              })}
-            </div>
-            {wSel && !wFb && (
-              <button onClick={() => { const ok = wSel===wq.correct; setWFb(ok?'ok':'no'); if(ok) confetti({particleCount:60,spread:50,origin:{y:.65}}); }}
-                className="btn w-full py-5 bg-amber-500 text-white font-black text-2xl rounded-2xl shadow-lg hover:bg-amber-600">
-                확인하기!
-              </button>
-            )}
-            {wFb && (
-              <div className="flex flex-col gap-4 mt-2">
-                <div className={`p-5 rounded-2xl border-2 ${wFb==='ok'?'bg-emerald-50 border-emerald-100':'bg-orange-50 border-orange-100'}`}>
-                  <p className="text-2xl font-black mb-2">{wFb==='ok' ? '완벽해요! 잘 알고 있네요 🎉' : '이럴 땐 이런 마음이에요!'}</p>
-                  <p className="text-xl font-bold text-slate-600">정답: <span className="text-pink-600 font-black">"{wq.correct}"</span></p>
-                </div>
-                <button onClick={() => { setWSel(null); setWFb(null); if(wheelIdx < wheels.length-1) setWheelIdx(w=>w+1); else setPhase('self_rating'); }}
-                  className="btn w-full py-5 bg-slate-800 text-white font-black text-2xl rounded-2xl shadow-lg">
-                  {wheelIdx < wheels.length-1 ? '다음 상황 ▶' : '내 마음 점수 매기기 ⭐'}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  /* ── 별점 자기 평가 ──────────────────────────────────────── */
-  if (phase === 'self_rating') return (
-    <div className="w-full h-full flex flex-col bg-white">
-      <Header label="⭐ 나의 별점" soundOn={soundOn} toggleSound={toggleSound}/>
-      <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-        <h2 className="text-4xl font-black text-slate-800 mb-4">오늘 공부 어땠나요?</h2>
-        <p className="text-xl font-bold text-slate-400 mb-10 italic">별표를 눌러 내 마음의 즐거움을 알려줘요!</p>
-        <div className="flex gap-4 mb-12 justify-center">
-          {[1,2,3,4,5].map(s => (
-            <button key={s} onClick={() => setStars(s)}
-              className={`text-7xl btn ${stars >= s ? 'scale-125 drop-shadow-lg' : 'opacity-25 grayscale'}`}>
-              ⭐
-            </button>
-          ))}
-        </div>
-        {stars > 0 && (
-          <button onClick={() => setPhase('recording')}
-            className="btn w-full max-w-xs py-5 bg-pink-500 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-pink-600">
-            다음으로 ➡️
-          </button>
-        )}
-      </div>
-    </div>
-  );
-
-  /* ── 녹음 과제 ────────────────────────────────────────────── */
-  if (phase === 'recording') return (
-    <div className="w-full h-full flex flex-col" style={{background:'#fffaf5'}}>
-      <Header label="🎙️ 목소리 일기" soundOn={soundOn} toggleSound={toggleSound}/>
-      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-
-        <div className="card card-pink w-full max-w-xl p-8 mb-6">
-          {/* 질문 크게 */}
-          <p className="text-3xl font-black text-pink-600 mb-3">나는 어떨 때 즐거운가요?</p>
-          <p className="text-xl font-bold text-slate-500 mb-6">또는 나는 어떨 때 행복한가요?</p>
-          {/* 예시 문장 크게 */}
-          <div className="bg-amber-50 border-2 border-amber-100 rounded-2xl p-5 mb-8">
-            <p className="text-base font-black text-slate-400 mb-2">📝 예시 문장</p>
-            <p className="text-xl font-bold text-pink-600">"나는 친구랑 술래잡기 할 때 제일 즐거워요!"</p>
-          </div>
-
-          {recStep === 'idle' && (
-            <button onClick={startRec}
-              className="btn w-full py-6 bg-rose-500 text-white rounded-2xl font-black text-3xl shadow-lg animate-pulse hover:animate-none hover:bg-rose-600">
-              🔴 녹음 시작!
-            </button>
-          )}
-          {recStep === 'rec' && (
-            <div className="flex flex-col gap-4">
-              <p className="text-2xl font-black text-rose-500 animate-pulse">🔴 녹음 중... 요정이 듣고 있어요!</p>
-              <button onClick={stopRec}
-                className="btn w-full py-6 bg-slate-800 text-white rounded-2xl font-black text-2xl shadow-lg">
-                ⏹ 다 말했어요! 완료
-              </button>
-            </div>
-          )}
-          {recStep === 'done' && (
-            <div className="flex flex-col gap-4">
-              <p className="text-2xl font-black text-emerald-600 mb-2">✅ 녹음이 잘 됐어요!</p>
-              {audioUrl && <audio controls src={audioUrl} className="w-full rounded-xl"/>}
-              <div className="flex gap-4 mt-2">
-                <button onClick={() => { setRecStep('idle'); setAudioUrl(null); setAudioB64(null); }}
-                  className="btn flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-lg">
-                  🔄 다시 하기
-                </button>
-                <button onClick={saveResult}
-                  className="btn flex-[2] py-4 bg-indigo-600 text-white rounded-2xl font-black text-xl shadow-lg hover:bg-indigo-700">
-                  제출하기 🏆
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {recStep !== 'rec' && (
-          <button onClick={() => setPhase('report')}
-            className="btn text-slate-300 underline font-bold text-base">
-            말하기가 쑥스러우면 넘어가도 돼요
-          </button>
-        )}
-      </div>
-    </div>
-  );
-
-  /* ── 최종 결과 & 수료증 ────────────────────────────────────── */
-  if (phase === 'report') {
-    const learned = [...new Set(history.filter(h => h.ok).map(h => h.concept))];
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center px-6 bg-white text-center relative overflow-auto scroll-y">
-        {saving && (
-          <div className="absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-50 rounded-[2.5rem]">
-            <div className="w-14 h-14 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin mb-4"/>
-            <p className="text-xl font-black text-slate-700">기록을 저장하는 중이에요...</p>
-          </div>
-        )}
-        <div className="text-7xl mb-3">🏆</div>
-        <h1 className="text-3xl font-black text-slate-900 mb-4">모험 대장증 발급!</h1>
-
-        <div className="card card-amber w-full max-w-lg p-8 mb-5">
-          <div className="text-5xl mb-4">🏅</div>
-          <h3 className="text-2xl font-black text-slate-800 mb-3">{student} 어린이를 칭찬합니다!</h3>
-          <p className="text-lg font-bold text-slate-500 italic mb-5 leading-relaxed">
-            자신의 감정을 바르게 이해하고<br/>표현하는 멋진 대장이 되었습니다.
-          </p>
-          {learned.length > 0 && (
-            <div className="flex flex-wrap gap-2 justify-center mb-5">
-              {learned.map((id,i) => {
-                const em = EMOTION_DB.find(e => e.id===id) || {};
-                return (
-                  <span key={i} className="bg-white border-2 border-amber-100 rounded-full px-4 py-2 font-black text-base text-slate-700">
-                    {em.emoji} {id}
-                  </span>
-                );
-              })}
-            </div>
-          )}
-          <p className="text-xs font-mono text-slate-300 tracking-widest">{new Date().toLocaleDateString('ko-KR')}</p>
-        </div>
-
-        <div className="flex gap-4 w-full max-w-lg">
-          {/* 🖼️ 수료증 이미지 저장 버튼 */}
-          <button onClick={() => downloadCert(student)}
-            className="btn flex-1 py-5 bg-indigo-600 text-white rounded-2xl font-black text-xl shadow-lg hover:bg-indigo-700">
-            🖼️ 수료증 저장
-          </button>
+    /* ── 상단 헤더 (한글 레이블) ─────────────────────────────────── */
+    const Header = ({ label, soundOn, toggleSound }) => (
+      <div className="flex items-center justify-between px-6 py-4 shrink-0">
+        <div className="flex items-center gap-3">
           <button onClick={() => window.location.reload()}
-            className="btn flex-1 py-5 bg-slate-800 text-white rounded-2xl font-black text-xl shadow-lg hover:bg-slate-700">
-            🏠 처음으로
+            className="btn flex items-center justify-center w-10 h-10 bg-white rounded-xl border-2 border-slate-100 text-slate-400 shadow-sm">
+            <HomeIcon />
           </button>
+          <span className="text-base font-black text-slate-400 bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm">
+            {label}
+          </span>
         </div>
+        <button onClick={toggleSound}
+          className={`btn w-12 h-12 rounded-xl border-2 shadow-sm text-2xl
+        ${soundOn ? 'bg-pink-100 text-pink-500 border-pink-200' : 'bg-white text-slate-300 border-slate-100'}`}>
+          {soundOn ? '🔊' : '🔇'}
+        </button>
       </div>
     );
-  }
 
-  return null;
-};
+    /* ── 마스코트 ─────────────────────────────────────────────────── */
+    const Mascot = ({ size = 90 }) => (
+      <svg width={size} height={size * 1.2} viewBox="0 0 100 120" fill="none">
+        <circle cx="50" cy="70" r="38" fill="white" stroke="#f472b6" strokeWidth="4.5" />
+        <path d="M34 20 L36 43" stroke="#f472b6" strokeWidth="9" strokeLinecap="round" />
+        <path d="M66 20 L64 43" stroke="#f472b6" strokeWidth="9" strokeLinecap="round" />
+        <circle cx="40" cy="68" r="3.5" fill="#1e293b" />
+        <circle cx="60" cy="68" r="3.5" fill="#1e293b" />
+        <path d="M43 85 Q50 92 57 85" stroke="#f472b6" strokeWidth="2.5" strokeLinecap="round" />
+      </svg>
+    );
 
-ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
-</script>
+    /* ══════════════════════════════════════════════════════════════
+       앱 본체
+    ══════════════════════════════════════════════════════════════ */
+    const App = () => {
+      const [phase, setPhase] = useState('loading');
+      const [students, setStudents] = useState([]);
+      const [student, setStudent] = useState('');
+      const [soundOn, setSoundOn] = useState(false);
+      const [micReady, setMicReady] = useState(false); // 마이크 사전 권한
+
+      // 개념 학습
+      const [conceptList, setConceptList] = useState([]);
+      const [conceptIdx, setConceptIdx] = useState(0);
+
+      // 퀴즈
+      const [qs, setQs] = useState([]);
+      const [qIdx, setQIdx] = useState(0);
+      const [fb, setFb] = useState(null);
+      const [wrong, setWrong] = useState([]);
+      const [history, setHistory] = useState([]);
+      const [reviewMode, setReviewMode] = useState(false);
+
+      // 감정 톺아보기
+      const [wheels, setWheels] = useState([]);
+      const [wheelIdx, setWheelIdx] = useState(0);
+      const [wSel, setWSel] = useState(null);
+      const [wFb, setWFb] = useState(null);
+
+      // 별점 & 녹음
+      const [stars, setStars] = useState(0);
+      const [recStep, setRecStep] = useState('idle');
+      const [audioUrl, setAudioUrl] = useState(null);
+      const [audioB64, setAudioB64] = useState(null);
+      const [saving, setSaving] = useState(false);
+      const [saved, setSaved] = useState(false); // 중복 저장 방지
+
+      const mrRef = useRef(null);
+      const chunksRef = useRef([]);
+
+      /* ── 초기 로드 ─────────────────────────────────────────────── */
+      useEffect(() => {
+        const init = async () => {
+          let names = SAMPLES;
+          if (window.google?.script?.run) {
+            names = await new Promise(res =>
+              window.google.script.run
+                .withSuccessHandler(l => res(l && l.length > 0 ? l : SAMPLES))
+                .withFailureHandler(() => res(SAMPLES))
+                .getStudentList()
+            );
+          } else if (GAS_URL) {
+            try {
+              const data = await gasGet('getStudentList');
+              if (Array.isArray(data) && data.length > 0) names = data;
+            } catch (_) { }
+          }
+          setStudents(names); setStudent(names[0]);
+          setPhase('start');
+        };
+        init();
+      }, []);
+
+      /* ── 마이크 사전 권한 요청 ─────────────────────────────────── */
+      const requestMic = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach(t => t.stop()); // 바로 닫아서 불필요한 녹음 방지
+          setMicReady(true);
+        } catch (_) {
+          alert('마이크 권한이 없습니다. 브라우저 설정에서 허용해 주세요.');
+        }
+      };
+
+      /* ── 레벨 선택 ────────────────────────────────────────────── */
+      const handleLevel = useCallback((count) => {
+        const shuffled = [...QUIZ_Q].sort(() => Math.random() - .5)
+          .slice(0, Math.min(count, QUIZ_Q.length))
+          .map(q => ({ ...q, opts: [...q.opts].sort(() => Math.random() - .5) }));
+        setQs(shuffled);
+
+        const must = EMOTION_DB.find(e => e.id === '뭉클하다');
+        const rest = EMOTION_DB.filter(e => e.id !== '뭉클하다').sort(() => Math.random() - .5).slice(0, 2);
+        setConceptList([must, ...rest].sort(() => Math.random() - .5));
+
+        const wqs = [...EMOTION_DB].sort(() => Math.random() - .5).slice(0, 3).map(e => {
+          const opp = e.cat === 'pos' ? 'neg' : 'pos';
+          const dis = EMOTION_DB.filter(x => x.cat === opp).sort(() => Math.random() - .5).slice(0, 2).map(x => x.id);
+          return { sit: e.sit, correct: e.id, choices: [e.id, ...dis].sort(() => Math.random() - .5) };
+        });
+        setWheels(wqs);
+
+        setQIdx(0); setFb(null); setWrong([]); setHistory([]);
+        setReviewMode(false); setWheelIdx(0); setWSel(null); setWFb(null);
+        setStars(0); setRecStep('idle'); setAudioUrl(null); setAudioB64(null); setSaved(false);
+        setPhase('concept'); setConceptIdx(0);
+      }, []);
+
+      /* ── 퀴즈 ─────────────────────────────────────────────────── */
+      const checkAns = useCallback((ua) => {
+        const list = reviewMode ? wrong : qs;
+        const q = list[qIdx];
+        const ok = ua === q.a;
+        if (!reviewMode) setHistory(h => [...h, { id: q.id, ok, concept: q.a }]);
+        if (ok) {
+          setFb({ ok: true, msg: q.fb });
+          if (reviewMode) setWrong(w => w.filter(x => x.id !== q.id));
+          confetti({ particleCount: 80, spread: 55, origin: { y: .65 } });
+        } else {
+          setFb({ ok: false });
+          if (!wrong.find(x => x.id === q.id)) setWrong(w => [...w, q]);
+        }
+      }, [reviewMode, wrong, qs, qIdx]);
+
+      const nextQ = useCallback(() => {
+        const list = reviewMode ? wrong : qs;
+        setFb(null);
+        if (qIdx < list.length - 1) setQIdx(q => q + 1);
+        else if (reviewMode || wrong.length === 0) setPhase('wheel');
+        else setPhase('재도전안내');
+      }, [reviewMode, wrong, qs, qIdx]);
+
+      /* ── 녹음 ─────────────────────────────────────────────────── */
+      const startRec = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const mr = new MediaRecorder(stream);
+          mrRef.current = mr; chunksRef.current = [];
+          mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+          mr.onstop = () => {
+            stream.getTracks().forEach(t => t.stop()); // 스트림 정리
+            const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+            setAudioUrl(URL.createObjectURL(blob));
+            const fr = new FileReader();
+            fr.readAsDataURL(blob);
+            fr.onloadend = () => { setAudioB64(fr.result.split(',')[1]); setRecStep('done'); };
+          };
+          mr.start(); setRecStep('rec');
+        } catch (_) { alert('마이크를 사용할 수 없어요!'); }
+      };
+
+      const stopRec = () => {
+        if (mrRef.current && mrRef.current.state !== 'inactive') mrRef.current.stop();
+      };
+
+      /* ── 결과 저장 (1회만) ────────────────────────────────────── */
+      const saveResult = async () => {
+        if (saved) { setPhase('report'); return; }
+        setSaving(true); setSaved(true);
+        const learned = [...new Set(history.filter(h => h.ok).map(h => h.concept))];
+        const payload = {
+          name: student, total: qs.length, correct: history.filter(h => h.ok).length,
+          emotions: learned, rating: stars, audioBase64: audioB64
+        };
+        if (window.google?.script?.run) {
+          window.google.script.run.saveRecord(payload);
+        } else if (GAS_URL) {
+          await gasPost(payload);
+        }
+        setSaving(false); setPhase('report');
+      };
+
+      const toggleSound = () => setSoundOn(s => !s);
+
+      /* ══════════════════════════════════════════════════════════════
+         화면 렌더링
+      ══════════════════════════════════════════════════════════════ */
+
+      /* 로딩 */
+      if (phase === 'loading') return (
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="w-14 h-14 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin" />
+        </div>
+      );
+
+      /* ── 시작 화면 ─────────────────────────────────────────────── */
+      if (phase === 'start') return (
+        <div className="w-full h-full flex flex-col items-center justify-center p-8 relative overflow-hidden"
+          style={{ background: 'linear-gradient(145deg,#fff9fb 0%,#f0f4ff 100%)' }}>
+          <div className="absolute top-8 left-8 text-7xl opacity-10 float">🍭</div>
+          <div className="absolute bottom-16 right-8 text-8xl opacity-10 float" style={{ animationDelay: '.8s' }}>🌈</div>
+          <Mascot size={110} />
+          <h1 className="text-5xl font-black text-slate-900 mt-5 mb-2 tracking-tight">
+            감정 알기 <span className="text-pink-500">대모험</span> ✨
+          </h1>
+          <p className="text-lg font-bold text-slate-400 mb-10">내 마음 속 반짝이는 보물을 찾아요!</p>
+
+          <div className="card card-pink w-full max-w-sm p-8 shadow-xl">
+            <p className="text-center text-sm font-black text-pink-400 tracking-widest mb-4">내 이름을 선택해요</p>
+            <select value={student} onChange={e => setStudent(e.target.value)}
+              className="w-full p-4 mb-5 bg-slate-50 border-2 border-slate-100 rounded-2xl text-2xl font-black text-slate-800 text-center focus:outline-none focus:border-pink-300">
+              {students.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+
+            {/* 🎙️ 마이크 사전 권한 요청 버튼 */}
+            {!micReady ? (
+              <button onClick={requestMic}
+                className="btn w-full py-4 mb-4 bg-rose-50 text-rose-600 border-2 border-rose-200 rounded-2xl font-black text-xl">
+                🎙️ 마이크 준비하기 (녹음용)
+              </button>
+            ) : (
+              <p className="text-center text-emerald-600 font-black text-lg mb-4">✅ 마이크 준비 완료!</p>
+            )}
+
+            <button onClick={() => { speak(`안녕하세요 ${student}!`, soundOn); setPhase('intro'); }}
+              className="btn w-full py-5 bg-pink-500 text-white rounded-2xl font-black text-3xl shadow-lg hover:bg-pink-600">
+              시작하기 ▶
+            </button>
+          </div>
+        </div>
+      );
+
+      /* ── 인트로 ────────────────────────────────────────────────── */
+      if (phase === 'intro') return (
+        <div className="w-full h-full flex flex-col" style={{ background: '#fff9fa' }}>
+          <Header label="🌸 시작" soundOn={soundOn} toggleSound={toggleSound} />
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-10">
+            <div className="inline-block bg-pink-100 text-pink-600 font-black text-base px-4 py-2 rounded-full mb-6">🌱 오늘의 약속</div>
+            <h2 className="text-4xl font-black text-slate-800 mb-8 leading-snug">
+              "나는 내 감정을<br />당당하게 말해요!"
+            </h2>
+            <div className="card card-pink p-8 max-w-lg mb-10 text-xl font-bold text-slate-500 leading-relaxed word-keep italic">
+              기쁠 때는 웃고, 슬플 때는 말하고,<br />어려울 때는 도움을 청하는 용기 있는 어린이가 될래요!
+            </div>
+            <button onClick={() => setPhase('level_select')}
+              className="btn w-full max-w-xs py-5 bg-pink-500 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-pink-600">
+              도전하기 ➡️
+            </button>
+          </div>
+        </div>
+      );
+
+      /* ── 레벨 선택 ─────────────────────────────────────────────── */
+      if (phase === 'level_select') return (
+        <div className="w-full h-full flex flex-col bg-white">
+          <Header label="📚 문제 수 선택" soundOn={soundOn} toggleSound={toggleSound} />
+          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+            <h2 className="text-3xl font-black text-slate-800 mb-10">몇 조각의 보물을 찾을까요?</h2>
+            <div className="flex flex-col gap-5 w-full max-w-xs">
+              {[5, 10, 15].map((n, i) => (
+                <button key={n} onClick={() => handleLevel(n)}
+                  className="btn py-6 bg-white border-4 border-pink-100 hover:border-pink-400 rounded-3xl text-3xl font-black text-pink-500 shadow-md flex items-center justify-between px-8">
+                  <span>{n} 조각 찾기</span>
+                  <span>{['🌱', '🌿', '🌳'][i]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+
+      /* ── 개념 학습 ─────────────────────────────────────────────── */
+      if (phase === 'concept') {
+        const em = conceptList[conceptIdx] || EMOTION_DB[0];
+        return (
+          <div className="w-full h-full flex flex-col" style={{ background: '#f8fbff' }}>
+            <Header label={`💡 감정 배우기 ${conceptIdx + 1}/3`} soundOn={soundOn} toggleSound={toggleSound} />
+            <div className="flex-1 flex flex-col items-center justify-center px-6 py-2">
+              <div className="card card-indigo w-full max-w-2xl p-8 flex flex-col items-center text-center">
+                {/* 태그 */}
+                <div className="flex gap-2 mb-5 flex-wrap justify-center">
+                  {em.hanja && <span className="bg-slate-700 text-white text-sm font-bold px-3 py-1 rounded-lg">한자: {em.hanja}</span>}
+                  <span className={`text-sm font-black px-3 py-1 rounded-lg ${em.cat === 'pos' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}>
+                    {em.cat === 'pos' ? '☀️ 긍정적인 마음' : '☁️ 힘든 마음'}
+                  </span>
+                </div>
+                {/* 상황 */}
+                <div className="bg-indigo-50 border-2 border-indigo-100 rounded-2xl p-5 mb-6 w-full">
+                  <p className="text-2xl font-bold text-slate-700 italic">"{em.sit}"</p>
+                </div>
+                {/* 이모지 + 단어 */}
+                <div className="text-[90px] mb-3 float">{em.emoji}</div>
+                <h3 className="text-5xl font-black text-indigo-600 mb-3">"{em.id}"</h3>
+                <p className="text-xl font-bold text-slate-400 word-keep max-w-sm">{em.desc}</p>
+              </div>
+              {/* 가시성 보장: 진한 인디고 + 흰 글자 */}
+              <button onClick={() => { if (conceptIdx < 2) setConceptIdx(c => c + 1); else { setQIdx(0); setPhase('activity'); } }}
+                className="btn mt-6 w-full max-w-2xl py-6 rounded-2xl font-black text-2xl shadow-lg text-white"
+                style={{ backgroundColor: '#4338ca' }}>
+                {conceptIdx < 2 ? '다음 설명 보기 ➡️' : '퀴즈 시작하기! 🎯'}
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      /* ── 퀴즈 ──────────────────────────────────────────────────── */
+      if (phase === 'activity') {
+        const list = reviewMode ? wrong : qs;
+        const q = list[qIdx];
+        if (!q) { setPhase('wheel'); return null; }
+
+        return (
+          <div className="w-full h-full flex flex-col bg-white">
+            <Header label={reviewMode ? '🔄 다시 풀기' : '🧩 감정 퀴즈'} soundOn={soundOn} toggleSound={toggleSound} />
+            <div className="flex-1 flex flex-col items-center justify-center px-6">
+              <div className="card card-pink w-full max-w-2xl p-10 text-center">
+                {!fb ? (
+                  <>
+                    <div className="text-[90px] mb-5">{q.img}</div>
+                    <h2 className="text-3xl font-black text-slate-800 mb-8 word-keep">"{q.q}"</h2>
+                    <div className="grid grid-cols-2 gap-5">
+                      {q.opts.map((o, i) => (
+                        <button key={i} onClick={() => checkAns(o)}
+                          className="btn py-6 bg-slate-50 border-2 border-slate-100 hover:border-pink-400 hover:bg-pink-50 rounded-3xl text-3xl font-black text-slate-700 shadow-sm">
+                          {o}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-[90px] mb-4">{fb.ok ? '🌟' : '🧐'}</div>
+                    <h2 className={`text-4xl font-black mb-5 ${fb.ok ? 'text-emerald-500' : 'text-amber-500'}`}>
+                      {fb.ok ? '정답이에요!' : '다시 해볼까요?'}
+                    </h2>
+                    {fb.ok && <div className="bg-emerald-50 border-2 border-emerald-100 rounded-2xl p-5 mb-6 text-xl font-bold text-slate-600 italic">{fb.msg}</div>}
+                    <button onClick={fb.ok ? nextQ : () => setFb(null)}
+                      className={`btn w-full py-5 rounded-2xl font-black text-2xl text-white shadow-lg ${fb.ok ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-amber-400 hover:bg-amber-500'}`}>
+                      {fb.ok ? '다음 문제로 ▶' : '다시 선택하기'}
+                    </button>
+                  </>
+                )}
+              </div>
+              <p className="mt-5 text-base font-black text-slate-300">{qIdx + 1} / {list.length}</p>
+            </div>
+          </div>
+        );
+      }
+
+      /* ── 재도전 안내 ─────────────────────────────────────────────── */
+      if (phase === '재도전안내') return (
+        <div className="w-full h-full flex flex-col">
+          <Header label="💡 한번 더!" soundOn={soundOn} toggleSound={toggleSound} />
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
+            <div className="text-[110px] mb-6">💡</div>
+            <h2 className="text-3xl font-black text-slate-800 mb-4">포기하지 않는 마음이<br />제일 멋져요!</h2>
+            <p className="text-xl font-bold text-slate-400 mb-10">아쉬운 문제들을 다시 한번 풀어볼까요?</p>
+            <button onClick={() => { setReviewMode(true); setQIdx(0); setFb(null); setPhase('activity'); }}
+              className="btn py-5 px-12 bg-orange-500 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-orange-600">
+              🔄 다시 도전!
+            </button>
+          </div>
+        </div>
+      );
+
+      /* ── 감정 톺아보기 ─────────────────────────────────────────── */
+      if (phase === 'wheel') {
+        const wq = wheels[wheelIdx];
+        if (!wq) { setPhase('self_rating'); return null; }
+
+        return (
+          <div className="w-full h-full flex flex-col" style={{ background: '#fffef5' }}>
+            <Header label={`🌈 상황 퀴즈 ${wheelIdx + 1}/3`} soundOn={soundOn} toggleSound={toggleSound} />
+            <div className="flex-1 flex flex-col items-center justify-center px-6">
+              <div className="card card-amber w-full max-w-2xl p-8 text-center">
+                {/* 크게 표시 */}
+                <p className="text-2xl font-black text-amber-600 mb-5">💛 어울리는 마음을 찾아주세요!</p>
+                <div className="bg-amber-50 border-2 border-amber-100 rounded-2xl p-6 mb-8">
+                  <p className="text-2xl font-black text-slate-700 italic">"{wq.sit}"</p>
+                </div>
+                <div className="grid grid-cols-3 gap-4 mb-8">
+                  {wq.choices.map((c, i) => {
+                    const em = EMOTION_DB.find(e => e.id === c) || {};
+                    return (
+                      <button key={i} onClick={() => { setWSel(c); setWFb(null); }}
+                        className={`btn p-5 rounded-2xl border-4 flex flex-col items-center gap-2 transition-all
+                      ${wSel === c ? 'border-amber-500 bg-amber-50 scale-105' : 'border-slate-50 bg-white'}`}>
+                        <span className="text-5xl">{em.emoji || '✨'}</span>
+                        <span className="text-xl font-black text-slate-700">{c}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {wSel && !wFb && (
+                  <button onClick={() => { const ok = wSel === wq.correct; setWFb(ok ? 'ok' : 'no'); if (ok) confetti({ particleCount: 60, spread: 50, origin: { y: .65 } }); }}
+                    className="btn w-full py-5 bg-amber-500 text-white font-black text-2xl rounded-2xl shadow-lg hover:bg-amber-600">
+                    확인하기!
+                  </button>
+                )}
+                {wFb && (
+                  <div className="flex flex-col gap-4 mt-2">
+                    <div className={`p-5 rounded-2xl border-2 ${wFb === 'ok' ? 'bg-emerald-50 border-emerald-100' : 'bg-orange-50 border-orange-100'}`}>
+                      <p className="text-2xl font-black mb-2">{wFb === 'ok' ? '완벽해요! 잘 알고 있네요 🎉' : '이럴 땐 이런 마음이에요!'}</p>
+                      <p className="text-xl font-bold text-slate-600">정답: <span className="text-pink-600 font-black">"{wq.correct}"</span></p>
+                    </div>
+                    <button onClick={() => { setWSel(null); setWFb(null); if (wheelIdx < wheels.length - 1) setWheelIdx(w => w + 1); else setPhase('self_rating'); }}
+                      className="btn w-full py-5 bg-slate-800 text-white font-black text-2xl rounded-2xl shadow-lg">
+                      {wheelIdx < wheels.length - 1 ? '다음 상황 ▶' : '내 마음 점수 매기기 ⭐'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      /* ── 별점 자기 평가 ──────────────────────────────────────── */
+      if (phase === 'self_rating') return (
+        <div className="w-full h-full flex flex-col bg-white">
+          <Header label="⭐ 나의 별점" soundOn={soundOn} toggleSound={toggleSound} />
+          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+            <h2 className="text-4xl font-black text-slate-800 mb-4">오늘 공부 어땠나요?</h2>
+            <p className="text-xl font-bold text-slate-400 mb-10 italic">별표를 눌러 내 마음의 즐거움을 알려줘요!</p>
+            <div className="flex gap-4 mb-12 justify-center">
+              {[1, 2, 3, 4, 5].map(s => (
+                <button key={s} onClick={() => setStars(s)}
+                  className={`text-7xl btn ${stars >= s ? 'scale-125 drop-shadow-lg' : 'opacity-25 grayscale'}`}>
+                  ⭐
+                </button>
+              ))}
+            </div>
+            {stars > 0 && (
+              <button onClick={() => setPhase('recording')}
+                className="btn w-full max-w-xs py-5 bg-pink-500 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-pink-600">
+                다음으로 ➡️
+              </button>
+            )}
+          </div>
+        </div>
+      );
+
+      /* ── 녹음 과제 ────────────────────────────────────────────── */
+      if (phase === 'recording') return (
+        <div className="w-full h-full flex flex-col" style={{ background: '#fffaf5' }}>
+          <Header label="🎙️ 목소리 일기" soundOn={soundOn} toggleSound={toggleSound} />
+          <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+
+            <div className="card card-pink w-full max-w-xl p-8 mb-6">
+              {/* 질문 크게 */}
+              <p className="text-3xl font-black text-pink-600 mb-3">나는 어떨 때 즐거운가요?</p>
+              <p className="text-xl font-bold text-slate-500 mb-6">또는 나는 어떨 때 행복한가요?</p>
+              {/* 예시 문장 크게 */}
+              <div className="bg-amber-50 border-2 border-amber-100 rounded-2xl p-5 mb-8">
+                <p className="text-base font-black text-slate-400 mb-2">📝 예시 문장</p>
+                <p className="text-xl font-bold text-pink-600">"나는 친구랑 술래잡기 할 때 제일 즐거워요!"</p>
+              </div>
+
+              {recStep === 'idle' && (
+                <button onClick={startRec}
+                  className="btn w-full py-6 bg-rose-500 text-white rounded-2xl font-black text-3xl shadow-lg animate-pulse hover:animate-none hover:bg-rose-600">
+                  🔴 녹음 시작!
+                </button>
+              )}
+              {recStep === 'rec' && (
+                <div className="flex flex-col gap-4">
+                  <p className="text-2xl font-black text-rose-500 animate-pulse">🔴 녹음 중... 요정이 듣고 있어요!</p>
+                  <button onClick={stopRec}
+                    className="btn w-full py-6 bg-slate-800 text-white rounded-2xl font-black text-2xl shadow-lg">
+                    ⏹ 다 말했어요! 완료
+                  </button>
+                </div>
+              )}
+              {recStep === 'done' && (
+                <div className="flex flex-col gap-4">
+                  <p className="text-2xl font-black text-emerald-600 mb-2">✅ 녹음이 잘 됐어요!</p>
+                  {audioUrl && <audio controls src={audioUrl} className="w-full rounded-xl" />}
+                  <div className="flex gap-4 mt-2">
+                    <button onClick={() => { setRecStep('idle'); setAudioUrl(null); setAudioB64(null); }}
+                      className="btn flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-lg">
+                      🔄 다시 하기
+                    </button>
+                    <button onClick={saveResult}
+                      className="btn flex-[2] py-4 bg-indigo-600 text-white rounded-2xl font-black text-xl shadow-lg hover:bg-indigo-700">
+                      제출하기 🏆
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {recStep !== 'rec' && (
+              <button onClick={() => setPhase('report')}
+                className="btn text-slate-300 underline font-bold text-base">
+                말하기가 쑥스러우면 넘어가도 돼요
+              </button>
+            )}
+          </div>
+        </div>
+      );
+
+      /* ── 최종 결과 & 수료증 ────────────────────────────────────── */
+      if (phase === 'report') {
+        const learned = [...new Set(history.filter(h => h.ok).map(h => h.concept))];
+        return (
+          <div className="w-full h-full flex flex-col items-center justify-center px-6 bg-white text-center relative overflow-auto scroll-y">
+            {saving && (
+              <div className="absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-50 rounded-[2.5rem]">
+                <div className="w-14 h-14 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin mb-4" />
+                <p className="text-xl font-black text-slate-700">기록을 저장하는 중이에요...</p>
+              </div>
+            )}
+            <div className="text-7xl mb-3">🏆</div>
+            <h1 className="text-3xl font-black text-slate-900 mb-4">모험 대장증 발급!</h1>
+
+            <div className="card card-amber w-full max-w-lg p-8 mb-5">
+              <div className="text-5xl mb-4">🏅</div>
+              <h3 className="text-2xl font-black text-slate-800 mb-3">{student} 어린이를 칭찬합니다!</h3>
+              <p className="text-lg font-bold text-slate-500 italic mb-5 leading-relaxed">
+                자신의 감정을 바르게 이해하고<br />표현하는 멋진 대장이 되었습니다.
+              </p>
+              {learned.length > 0 && (
+                <div className="flex flex-wrap gap-2 justify-center mb-5">
+                  {learned.map((id, i) => {
+                    const em = EMOTION_DB.find(e => e.id === id) || {};
+                    return (
+                      <span key={i} className="bg-white border-2 border-amber-100 rounded-full px-4 py-2 font-black text-base text-slate-700">
+                        {em.emoji} {id}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+              <p className="text-xs font-mono text-slate-300 tracking-widest">{new Date().toLocaleDateString('ko-KR')}</p>
+            </div>
+
+            <div className="flex gap-4 w-full max-w-lg">
+              {/* 🖼️ 수료증 이미지 저장 버튼 */}
+              <button onClick={() => downloadCert(student)}
+                className="btn flex-1 py-5 bg-indigo-600 text-white rounded-2xl font-black text-xl shadow-lg hover:bg-indigo-700">
+                🖼️ 수료증 저장
+              </button>
+              <button onClick={() => window.location.reload()}
+                className="btn flex-1 py-5 bg-slate-800 text-white rounded-2xl font-black text-xl shadow-lg hover:bg-slate-700">
+                🏠 처음으로
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      return null;
+    };
+
+    ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+  </script>
 </body>
+
 </html>
