@@ -127,8 +127,10 @@
     };
     const gasPost = async (data) => {
       try {
+        // no-cors: GitHub Pages → GAS POST 시 CORS 우회 (응답은 읽을 수 없지만 전송은 됨)
         await fetch(GAS_URL, {
-          method: 'POST', redirect: 'follow',
+          method: 'POST',
+          mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(data)
         });
