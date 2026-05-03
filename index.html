@@ -1,4 +1,92 @@
-<!DOCTYPE html>
+/* 무드미터 사분면 - 가독성 강화 */
+.mood-wrap{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+.mood-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:10px;
+  width:100%;
+  flex:1;
+  min-height:0;
+}
+.mood-quad{
+  transition:all .3s;
+  border-radius:1.25rem;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  min-height:0;
+}
+.mood-quad.active{
+  transform:scale(1.02);
+  box-shadow:0 12px 32px rgba(0,0,0,.18);
+  z-index:5;
+}
+.mood-quad.dim{
+  opacity:.45;
+  filter:saturate(.5);
+}
+.mood-red{background:linear-gradient(135deg,#fecaca 0%,#fca5a5 100%);border:4px solid #ef4444}
+.mood-yellow{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:4px solid #f59e0b}
+.mood-blue{background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);border:4px solid #3b82f6}
+.mood-green{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border:4px solid #10b981}
+
+.quad-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  justify-content:center;
+}
+.quad-icon{font-size:2.2rem}
+.quad-title{
+  font-size:1.85rem;
+  font-weight:900;
+  letter-spacing:-.5px;
+}
+.quad-sub{
+  font-size:1.1rem;
+  font-weight:bold;
+  margin-top:4px;
+  margin-bottom:10px;
+  opacity:.85;
+  text-align:center;
+  white-space:nowrap;
+}
+.quad-emotions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  justify-content:center;
+  align-content:center;
+  width:100%;
+}
+.emotion-chip{
+  background:rgba(255,255,255,.75);
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:1.15rem;
+  font-weight:bold;
+  color:#1e293b;
+  white-space:nowrap;
+  line-height:1.3;
+}
+.emotion-chip.highlight{
+  background:white;
+  color:#db2777;
+  font-weight:900;
+  font-size:1.55rem;
+  padding:10px 22px;
+  box-shadow:0 6px 18px rgba(0,0,0,.2);
+  animation:pulse-emotion 1.2s ease-in-out infinite;
+  <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -64,35 +152,45 @@ body{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif;background:#dde3ee}
 .scroll-y::-webkit-scrollbar{width:6px}
 .scroll-y::-webkit-scrollbar-thumb{background:#fbcfe8;border-radius:3px}
 
-.text-mega{font-size:clamp(2rem,4vw,3rem);line-height:1.3}
-.text-big{font-size:clamp(1.5rem,3vw,2.25rem);line-height:1.4}
-.text-mid{font-size:clamp(1.25rem,2.5vw,1.75rem);line-height:1.5}
+/* 큰 글씨 - 저학년 가독성 (전체적으로 상향) */
+.text-mega{font-size:clamp(2.4rem,4.5vw,3.4rem);line-height:1.3}
+.text-big{font-size:clamp(1.85rem,3.5vw,2.6rem);line-height:1.4}
+.text-mid{font-size:clamp(1.4rem,2.8vw,1.95rem);line-height:1.5}
+.text-base-lg{font-size:clamp(1.15rem,2.2vw,1.45rem);line-height:1.5}
 
 textarea{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif}
 
-/* 무드미터 사분면 - 가독성 강화 */
+/* border-3 (Tailwind에 없음) 직접 정의 */
+.border-3{border-width:3px}
+
+textarea{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif}
+
+/* 무드미터 사분면 - 모달용 (크게) */
 .mood-wrap{
   width:100%;
+  height:100%;
   display:flex;
   flex-direction:column;
 }
 .mood-grid{
   display:grid;
   grid-template-columns:repeat(2, 1fr);
-  gap:8px;
+  gap:14px;
   width:100%;
+  flex:1;
+  min-height:0;
 }
 .mood-quad{
   transition:all .3s;
-  border-radius:1.25rem;
-  padding:10px 12px;
+  border-radius:1.5rem;
+  padding:18px 20px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:flex-start;
+  justify-content:center;
   position:relative;
   overflow:hidden;
-  min-height:140px;
+  min-height:0;
 }
 .mood-quad.active{
   transform:scale(1.02);
@@ -100,48 +198,48 @@ textarea{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif}
   z-index:5;
 }
 .mood-quad.dim{
-  opacity:.5;
+  opacity:.45;
   filter:saturate(.5);
 }
-.mood-red{background:linear-gradient(135deg,#fecaca 0%,#fca5a5 100%);border:4px solid #ef4444}
-.mood-yellow{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:4px solid #f59e0b}
-.mood-blue{background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);border:4px solid #3b82f6}
-.mood-green{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border:4px solid #10b981}
+.mood-red{background:linear-gradient(135deg,#fecaca 0%,#fca5a5 100%);border:5px solid #ef4444}
+.mood-yellow{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:5px solid #f59e0b}
+.mood-blue{background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);border:5px solid #3b82f6}
+.mood-green{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border:5px solid #10b981}
 
 .quad-header{
   display:flex;
   align-items:center;
-  gap:6px;
-  margin-bottom:2px;
-  width:100%;
+  gap:12px;
   justify-content:center;
+  margin-bottom:6px;
 }
-.quad-icon{font-size:1.6rem}
+.quad-icon{font-size:2.8rem}
 .quad-title{
-  font-size:1.25rem;
+  font-size:2.2rem;
   font-weight:900;
+  letter-spacing:-.5px;
 }
 .quad-sub{
-  font-size:.85rem;
+  font-size:1.35rem;
   font-weight:bold;
-  margin-bottom:6px;
-  opacity:.8;
+  margin-bottom:14px;
+  opacity:.88;
   text-align:center;
   white-space:nowrap;
 }
 .quad-emotions{
   display:flex;
   flex-wrap:wrap;
-  gap:4px;
+  gap:8px;
   justify-content:center;
-  align-content:flex-start;
+  align-content:center;
   width:100%;
 }
 .emotion-chip{
-  background:rgba(255,255,255,.7);
-  padding:3px 9px;
+  background:rgba(255,255,255,.8);
+  padding:8px 18px;
   border-radius:999px;
-  font-size:1rem;
+  font-size:1.4rem;
   font-weight:bold;
   color:#1e293b;
   white-space:nowrap;
@@ -151,42 +249,76 @@ textarea{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif}
   background:white;
   color:#db2777;
   font-weight:900;
-  font-size:1.2rem;
-  padding:5px 14px;
-  box-shadow:0 4px 14px rgba(0,0,0,.18);
+  font-size:1.75rem;
+  padding:12px 26px;
+  box-shadow:0 6px 20px rgba(0,0,0,.2);
   animation:pulse-emotion 1.2s ease-in-out infinite;
   transform:scale(1.1);
 }
 @keyframes pulse-emotion{
   0%,100%{transform:scale(1.1)}
-  50%{transform:scale(1.18)}
+  50%{transform:scale(1.2)}
 }
 
 .mood-axis-x{
   text-align:center;
-  font-size:.95rem;
+  font-size:1.2rem;
   font-weight:900;
-  color:#64748b;
-  padding:3px 0;
+  color:#475569;
+  padding:6px 0;
 }
 .mood-axis-y-wrap{
   display:flex;
   align-items:stretch;
-  gap:6px;
+  gap:8px;
   width:100%;
+  flex:1;
+  min-height:0;
 }
 .mood-axis-y{
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:.95rem;
+  font-size:1.2rem;
   font-weight:900;
-  color:#64748b;
+  color:#475569;
   writing-mode:vertical-rl;
   white-space:nowrap;
   flex-shrink:0;
 }
 .mood-axis-y.left{transform:rotate(180deg)}
+
+/* 모달 */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;align-items:center;justify-content:center;
+  z-index:100;padding:16px;
+  animation:fade-in .2s;
+}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+.modal-content{
+  background:white;
+  border-radius:2rem;
+  width:100%;max-width:1100px;
+  height:90vh;max-height:840px;
+  display:flex;flex-direction:column;
+  padding:20px;
+  animation:pop-up .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes pop-up{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* 사분면 색깔 배지 (메인 화면용) */
+.quad-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 22px;border-radius:999px;
+  font-size:1.5rem;font-weight:900;
+  border:3px solid;
+}
+.quad-badge-red{background:#fee2e2;color:#b91c1c;border-color:#ef4444}
+.quad-badge-yellow{background:#fef3c7;color:#b45309;border-color:#f59e0b}
+.quad-badge-blue{background:#dbeafe;color:#1d4ed8;border-color:#3b82f6}
+.quad-badge-green{background:#d1fae5;color:#047857;border-color:#10b981}
 </style>
 <script>
 /* ── GAS 웹앱 URL ──────────────────────────────────── */
@@ -578,9 +710,8 @@ const HighlightedText = ({text, highlightIdx, className=""}) => {
   );
 };
 
-/* 무드미터 - 4사분면 (감정 칩 표시) */
+/* 무드미터 - 4사분면 (모달 내부용 - 크고 시원하게) */
 const MoodMeter = ({activeQuad, emotion, allEmotions}) => {
-  // 사분면별 감정 그룹화
   const grouped = {red:[], yellow:[], blue:[], green:[]};
   (allEmotions || []).forEach(e => {
     if(grouped[e.quad]) grouped[e.quad].push(e);
@@ -588,7 +719,6 @@ const MoodMeter = ({activeQuad, emotion, allEmotions}) => {
 
   const renderQuad = (quadKey, title, subtitle, icon, textColor) => {
     const emotions = grouped[quadKey] || [];
-    // 활성 감정이 이 사분면에 있으면 맨 앞으로
     let display = [...emotions];
     if(emotion && emotion.quad === quadKey){
       display = [emotion, ...emotions.filter(e => e.id !== emotion.id)];
@@ -617,10 +747,7 @@ const MoodMeter = ({activeQuad, emotion, allEmotions}) => {
 
   return (
     <div className="mood-wrap">
-      {/* 위 라벨 */}
       <div className="mood-axis-x">⬆️ 활기참 (에너지 높음)</div>
-
-      {/* 본체 (좌우 라벨 + 4사분면) */}
       <div className="mood-axis-y-wrap">
         <div className="mood-axis-y left">⬅️ 힘듦</div>
         <div className="mood-grid flex-1">
@@ -631,9 +758,32 @@ const MoodMeter = ({activeQuad, emotion, allEmotions}) => {
         </div>
         <div className="mood-axis-y">유쾌 ➡️</div>
       </div>
-
-      {/* 아래 라벨 */}
       <div className="mood-axis-x">⬇️ 잔잔함 (에너지 낮음)</div>
+    </div>
+  );
+};
+
+/* 무드미터 모달 (전체 화면) */
+const MoodModal = ({open, onClose, activeQuad, emotion, allEmotions, soundOn}) => {
+  if(!open) return null;
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e=>e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-3 shrink-0">
+          <h3 className="text-big font-black text-slate-800">🗺️ 마음 지도</h3>
+          <button onClick={()=>{sfx.click(soundOn); onClose()}}
+            className="btn w-12 h-12 bg-slate-100 hover:bg-slate-200 rounded-2xl text-2xl font-black text-slate-600">
+            ✕
+          </button>
+        </div>
+        <div className="flex-1 min-h-0">
+          <MoodMeter activeQuad={activeQuad} emotion={emotion} allEmotions={allEmotions}/>
+        </div>
+        <button onClick={()=>{sfx.click(soundOn); onClose()}}
+          className="shrink-0 mt-4 btn w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-big shadow-lg">
+          알았어요! ✨
+        </button>
+      </div>
     </div>
   );
 };
@@ -865,6 +1015,17 @@ const App = () => {
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  // 무드미터 모달
+  const [moodModal, setMoodModal] = useState(null);  // {quad, emotion} or null
+  const openMoodModal = (quad, em) => {
+    sfx.click(soundOn);
+    setMoodModal({quad, emotion: em});
+  };
+  const closeMoodModal = () => setMoodModal(null);
+
+  // phase가 바뀌면 모달 자동 닫기
+  useEffect(() => { setMoodModal(null); }, [phase]);
 
   /* 데이터 로드 */
   useEffect(() => {
@@ -1189,33 +1350,54 @@ const App = () => {
     </div>
   );
 
-  /* 무드미터 인트로 - 4사분면 소개 */
+  /* 무드미터 인트로 - 4사분면 소개 (큼지막한 카드 4개) */
   if(phase === 'mood_intro') return (
-    <div className="w-full h-full flex flex-col" style={{background:'#fafbff'}}>
-      <Header label="🎨 마음의 네 가지 색깔" soundOn={soundOn} toggleSound={toggleSound}/>
-      <div className="flex-1 flex flex-col px-4 pb-4 overflow-hidden">
-        <div className="text-center mb-2 shrink-0">
-          <h2 className="text-big font-black text-slate-800 mb-1">
-            {soundOn ? <HighlightedText text="우리 마음에는 네 가지 색깔이 있어요!" highlightIdx={highlightIdx}/> : '우리 마음에는 네 가지 색깔이 있어요!'}
-          </h2>
-          <p className="text-base font-bold text-slate-500 italic word-keep">
-            상황에 따라 마음 색깔이 달라져요
-          </p>
-        </div>
+    <>
+      <MoodModal open={!!moodModal} onClose={closeMoodModal} activeQuad={moodModal?.quad} emotion={moodModal?.emotion} allEmotions={emotionData} soundOn={soundOn}/>
+      <div className="w-full h-full flex flex-col" style={{background:'#fafbff'}}>
+        <Header label="🎨 마음의 네 가지 색깔" soundOn={soundOn} toggleSound={toggleSound}/>
+        <div className="flex-1 flex flex-col px-5 pb-4 overflow-hidden">
+          <div className="text-center mb-3 shrink-0">
+            <h2 className="text-big font-black text-slate-800 mb-1">
+              {soundOn ? <HighlightedText text="우리 마음에는 네 가지 색깔이 있어요!" highlightIdx={highlightIdx}/> : '우리 마음에는 네 가지 색깔이 있어요!'}
+            </h2>
+            <p className="text-base-lg font-bold text-slate-500 italic">눌러보면 어떤 감정들이 있는지 볼 수 있어요!</p>
+          </div>
 
-        <div className="flex-1 flex items-center justify-center min-h-0 mb-3">
-          <MoodMeter activeQuad={null} emotion={null} allEmotions={emotionData}/>
-        </div>
+          {/* 4개 큰 카드 */}
+          <div className="flex-1 grid grid-cols-2 gap-3 min-h-0">
+            {[
+              {key:'red',    title:'활기찬 힘듦',     sub:'화나고 무서운 마음',   icon:'🔥', textColor:'#b91c1c'},
+              {key:'yellow', title:'활기찬 즐거움',   sub:'신나고 기쁜 마음',     icon:'☀️', textColor:'#b45309'},
+              {key:'blue',   title:'잔잔한 힘듦',     sub:'슬프고 외로운 마음',   icon:'💧', textColor:'#1d4ed8'},
+              {key:'green',  title:'잔잔한 평온',     sub:'편안하고 따뜻한 마음', icon:'🌿', textColor:'#047857'},
+            ].map(q => {
+              const count = emotionData.filter(e => e.quad === q.key).length;
+              return (
+                <button key={q.key} onClick={()=>openMoodModal(q.key, null)}
+                  className={`mood-quad mood-${q.key} btn flex flex-col items-center justify-center text-center`}
+                  style={{cursor:'pointer'}}>
+                  <div className="text-7xl mb-3">{q.icon}</div>
+                  <div className="quad-title" style={{color: q.textColor, fontSize:'2.4rem'}}>{q.title}</div>
+                  <div className="quad-sub" style={{color: q.textColor, fontSize:'1.5rem', marginTop:'8px'}}>{q.sub}</div>
+                  <div className="mt-3 bg-white/70 rounded-full px-5 py-2 font-black text-slate-700" style={{fontSize:'1.2rem'}}>
+                    감정 {count}개 보기 🔍
+                  </div>
+                </button>
+              );
+            })}
+          </div>
 
-        <button onClick={()=>{sfx.click(soundOn); setPhase('concept')}}
-          className="btn shrink-0 w-full max-w-md mx-auto py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl font-black text-big shadow-lg">
-          감정 배우러 가기 ▶
-        </button>
+          <button onClick={()=>{sfx.click(soundOn); setPhase('concept')}}
+            className="btn shrink-0 mt-4 w-full max-w-md mx-auto py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl font-black text-big shadow-lg">
+            감정 배우러 가기 ▶
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 
-  /* 개념 학습 - 왼쪽 카드 + 오른쪽 무드미터 (가로 레이아웃) */
+  /* 개념 학습 - 큰 카드 한 장 + 사분면 배지 */
   if(phase === 'concept'){
     const em = conceptList[conceptIdx];
     if(!em){
@@ -1223,41 +1405,50 @@ const App = () => {
     }
     const quadInfo = QUADRANTS[em.quad] || QUADRANTS.yellow;
     return (
-      <div className="w-full h-full flex flex-col" style={{background:'#f8fbff'}}>
-        <Header label={`💡 감정 배우기 ${conceptIdx+1}/${conceptList.length}`} soundOn={soundOn} toggleSound={toggleSound}/>
-        <div className="flex-1 flex flex-col px-4 pb-3 overflow-hidden">
-          {/* 가로 2열 레이아웃 */}
-          <div className="flex-1 flex gap-3 min-h-0 mb-3">
-            {/* 왼쪽: 개념 카드 */}
-            <div className="card card-indigo flex-1 p-5 flex flex-col items-center text-center justify-center">
-              <div className="bg-indigo-50 border-2 border-indigo-100 rounded-2xl p-3 mb-3 w-full">
-                <p className="text-base font-black text-slate-400 mb-1">📍 이런 상황이 있어요</p>
-                <p className="text-mid font-bold text-slate-700 italic word-keep">"{em.sit}"</p>
+      <>
+        <MoodModal open={!!moodModal} onClose={closeMoodModal} activeQuad={moodModal?.quad} emotion={moodModal?.emotion} allEmotions={emotionData} soundOn={soundOn}/>
+        <div className="w-full h-full flex flex-col" style={{background:'#f8fbff'}}>
+          <Header label={`💡 감정 배우기 ${conceptIdx+1}/${conceptList.length}`} soundOn={soundOn} toggleSound={toggleSound}/>
+          <div className="flex-1 flex flex-col px-5 pb-4 overflow-hidden">
+            <div className="card card-indigo flex-1 p-6 flex flex-col items-center text-center justify-center min-h-0 mb-3">
+              {/* 사분면 배지 - 클릭하면 모달 */}
+              <button onClick={()=>openMoodModal(em.quad, em)}
+                className={`quad-badge quad-badge-${em.quad} btn mb-4`}>
+                <span className="text-3xl">{quadInfo.emoji}</span>
+                <span>{quadInfo.name}</span>
+                <span className="text-xl opacity-60">🔍 마음지도</span>
+              </button>
+
+              {/* 상황 */}
+              <div className="bg-indigo-50 border-3 border-indigo-200 rounded-2xl p-5 mb-4 w-full max-w-2xl">
+                <p className="text-base-lg font-black text-slate-500 mb-2">📍 이런 상황이 있어요</p>
+                <p className="text-big font-bold text-slate-700 italic word-keep">"{em.sit}"</p>
               </div>
-              <div className="text-base font-black text-slate-400 mb-2">⬇️ 그럴 땐 이런 마음이에요</div>
-              <div className="text-7xl mb-2">{em.emoji}</div>
-              <h3 className="text-mega font-black mb-2" style={{color: quadInfo.color}}>"{em.id}"</h3>
-              <p className="text-mid font-bold text-slate-600 word-keep">{em.desc}</p>
+
+              <div className="text-base-lg font-black text-slate-500 mb-3">⬇️ 그럴 땐 이런 마음이에요</div>
+
+              {/* 감정 - 매우 크게 */}
+              <div className="flex items-center gap-4 mb-3 flex-wrap justify-center">
+                <span style={{fontSize:'7rem', lineHeight:1}}>{em.emoji}</span>
+                <h3 className="font-black" style={{color: quadInfo.color, fontSize:'clamp(3rem,6vw,5rem)', lineHeight:1.1}}>"{em.id}"</h3>
+              </div>
+
+              {/* 정의 - 크게 */}
+              <p className="text-big font-bold text-slate-600 word-keep max-w-2xl">{em.desc}</p>
             </div>
 
-            {/* 오른쪽: 무드미터 */}
-            <div className="flex-1 flex flex-col justify-center">
-              <p className="text-center text-base font-black text-slate-500 mb-2">⬇️ 마음 지도에서 찾아봐요</p>
-              <MoodMeter activeQuad={em.quad} emotion={em} allEmotions={emotionData}/>
-            </div>
+            <button onClick={()=>{sfx.click(soundOn); if(conceptIdx < conceptList.length-1) setConceptIdx(c=>c+1); else { setQIdx(0); setPhase('activity'); }}}
+              className="btn shrink-0 w-full py-5 rounded-2xl font-black text-big shadow-lg text-white"
+              style={{backgroundColor:'#4338ca'}}>
+              {conceptIdx < conceptList.length-1 ? '다음 감정 배우기 ➡️' : '퀴즈 시작! 🎯'}
+            </button>
           </div>
-
-          <button onClick={()=>{sfx.click(soundOn); if(conceptIdx < conceptList.length-1) setConceptIdx(c=>c+1); else { setQIdx(0); setPhase('activity'); }}}
-            className="btn shrink-0 w-full py-4 rounded-2xl font-black text-big shadow-lg text-white"
-            style={{backgroundColor:'#4338ca'}}>
-            {conceptIdx < conceptList.length-1 ? '다음 감정 배우기 ➡️' : '퀴즈 시작! 🎯'}
-          </button>
         </div>
-      </div>
+      </>
     );
   }
 
-  /* 퀴즈 - 정답/오답 차별화 + 무드미터 표시 */
+  /* 퀴즈 - 정답/오답 차별화 */
   if(phase === 'activity'){
     const list = reviewMode ? wrong : qs;
     const q = list[qIdx];
@@ -1265,75 +1456,83 @@ const App = () => {
       return <div className="w-full h-full flex items-center justify-center"><div className="w-12 h-12 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin"/></div>;
     }
     const ansEmotion = emotionData.find(e => e.id === q.a);
+    const ansQuadInfo = ansEmotion ? QUADRANTS[ansEmotion.quad] : null;
     return (
-      <div className="w-full h-full flex flex-col bg-white relative">
-        <StickerBurst trigger={stickerTrigger}/>
-        <Header label={reviewMode ? '🔄 다시 풀기' : `🧩 감정 퀴즈 ${qIdx+1}/${list.length}`} soundOn={soundOn} toggleSound={toggleSound}/>
-        <div className="flex-1 flex flex-col px-4 pb-3 overflow-hidden">
-          <div className={`card card-pink flex-1 p-5 text-center overflow-y-auto ${fb?.ok===false?'shake':''}`}>
-            {!fb ? (
-              <div className="h-full flex flex-col items-center justify-center">
-                <div className="text-[80px] mb-3 float">{q.img}</div>
-                <h2 className="text-big font-black text-slate-800 mb-6 word-keep">
-                  {soundOn ? <HighlightedText text={`"${q.q}"`} highlightIdx={highlightIdx}/> : `"${q.q}"`}
-                </h2>
-                <div className="grid grid-cols-2 gap-4 w-full max-w-2xl">
-                  {q.opts.map((o,i)=>(
-                    <button key={i} onClick={()=>checkAns(o)}
-                      className="btn py-7 bg-slate-50 border-2 border-slate-200 hover:border-pink-400 hover:bg-pink-50 rounded-3xl text-big font-black text-slate-700 shadow-sm">
-                      {o}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : fb.ok ? (
-              <div className="h-full flex flex-col">
-                {/* 가로 분할: 왼쪽 정답 메시지, 오른쪽 무드미터 */}
-                <div className="flex gap-3 flex-1 min-h-0 mb-3">
-                  <div className="flex-1 flex flex-col items-center justify-center">
-                    <div className="text-[70px] mb-1 bounce-in">🌟</div>
-                    <h2 className="text-mega font-black mb-3 text-emerald-500">정답이에요!</h2>
-                    <div className="bg-emerald-50 border-2 border-emerald-100 rounded-2xl p-4 text-mid font-bold text-slate-700 italic word-keep">
-                      {fb.msg}
-                    </div>
+      <>
+        <MoodModal open={!!moodModal} onClose={closeMoodModal} activeQuad={moodModal?.quad} emotion={moodModal?.emotion} allEmotions={emotionData} soundOn={soundOn}/>
+        <div className="w-full h-full flex flex-col bg-white relative">
+          <StickerBurst trigger={stickerTrigger}/>
+          <Header label={reviewMode ? '🔄 다시 풀기' : `🧩 감정 퀴즈 ${qIdx+1}/${list.length}`} soundOn={soundOn} toggleSound={toggleSound}/>
+          <div className="flex-1 flex flex-col px-5 pb-4 overflow-hidden">
+            <div className={`card card-pink flex-1 p-6 text-center min-h-0 flex flex-col ${fb?.ok===false?'shake':''}`}>
+              {!fb ? (
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="text-[100px] mb-4 float">{q.img}</div>
+                  <h2 className="text-big font-black text-slate-800 mb-7 word-keep">
+                    {soundOn ? <HighlightedText text={`"${q.q}"`} highlightIdx={highlightIdx}/> : `"${q.q}"`}
+                  </h2>
+                  <div className="grid grid-cols-2 gap-5 w-full max-w-2xl">
+                    {q.opts.map((o,i)=>(
+                      <button key={i} onClick={()=>checkAns(o)}
+                        className="btn py-8 bg-slate-50 border-3 border-slate-200 hover:border-pink-400 hover:bg-pink-50 rounded-3xl font-black text-slate-700 shadow-sm"
+                        style={{fontSize:'clamp(1.6rem,3vw,2.2rem)'}}>
+                        {o}
+                      </button>
+                    ))}
                   </div>
-                  {ansEmotion && (
-                    <div className="flex-1 flex flex-col justify-center">
-                      <p className="text-center text-base font-black text-slate-500 mb-2">⬇️ 마음 지도에서 찾아봐요</p>
-                      <MoodMeter activeQuad={ansEmotion.quad} emotion={ansEmotion} allEmotions={emotionData}/>
-                    </div>
-                  )}
                 </div>
-                <button onClick={nextQ}
-                  className="btn shrink-0 w-full py-5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-big shadow-lg">
-                  다음 문제로 ▶
-                </button>
-              </div>
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center">
-                <div className="text-[80px] mb-2 bounce-in">🤔</div>
-                <h2 className="text-mega font-black mb-3 text-amber-500">앗, 다시 생각해봐요!</h2>
-                <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 mb-3 text-mid font-bold text-slate-700 italic word-keep max-w-2xl">
-                  {fb.msg}
-                </div>
-                <p className="text-base font-black text-slate-500 mb-3">⬇️ 다시 골라봐요!</p>
-                <div className="grid grid-cols-2 gap-4 w-full max-w-2xl">
-                  {q.opts.map((o,i)=>(
-                    <button key={i} onClick={()=>{ setFb(null); setTimeout(()=>checkAns(o), 50); }}
-                      className={`btn py-6 rounded-3xl text-big font-black shadow-sm border-2 ${
-                        o === fb.picked
-                          ? 'bg-slate-100 text-slate-400 border-slate-200'
-                          : 'bg-pink-50 text-pink-600 border-pink-300 hover:bg-pink-100'
-                      }`}>
-                      {o}
+              ) : fb.ok ? (
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="text-[90px] mb-2 bounce-in">🌟</div>
+                  <h2 className="font-black mb-4 text-emerald-500" style={{fontSize:'clamp(2.4rem,5vw,3.6rem)'}}>정답이에요!</h2>
+
+                  {/* 사분면 배지 + 모달 버튼 */}
+                  {ansEmotion && ansQuadInfo && (
+                    <button onClick={()=>openMoodModal(ansEmotion.quad, ansEmotion)}
+                      className={`quad-badge quad-badge-${ansEmotion.quad} btn mb-4`}>
+                      <span className="text-3xl">{ansQuadInfo.emoji}</span>
+                      <span>{ansQuadInfo.name}</span>
+                      <span className="text-xl opacity-60">🔍 마음지도</span>
                     </button>
-                  ))}
+                  )}
+
+                  {/* 정답 메시지 - 크게 */}
+                  <div className="bg-emerald-50 border-3 border-emerald-200 rounded-2xl p-5 mb-5 max-w-3xl">
+                    <p className="text-big font-bold text-slate-700 italic word-keep">{fb.msg}</p>
+                  </div>
+
+                  <button onClick={nextQ}
+                    className="btn w-full max-w-xl py-5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-big shadow-lg">
+                    다음 문제로 ▶
+                  </button>
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="text-[90px] mb-2 bounce-in">🤔</div>
+                  <h2 className="font-black mb-4 text-amber-500" style={{fontSize:'clamp(2.4rem,5vw,3.6rem)'}}>앗, 다시 생각해봐요!</h2>
+                  <div className="bg-amber-50 border-3 border-amber-200 rounded-2xl p-5 mb-5 max-w-3xl">
+                    <p className="text-big font-bold text-slate-700 italic word-keep">{fb.msg}</p>
+                  </div>
+                  <p className="text-base-lg font-black text-slate-500 mb-3">⬇️ 다시 골라봐요!</p>
+                  <div className="grid grid-cols-2 gap-5 w-full max-w-2xl">
+                    {q.opts.map((o,i)=>(
+                      <button key={i} onClick={()=>{ setFb(null); setTimeout(()=>checkAns(o), 50); }}
+                        className={`btn py-7 rounded-3xl font-black shadow-sm border-3 ${
+                          o === fb.picked
+                            ? 'bg-slate-100 text-slate-400 border-slate-200'
+                            : 'bg-pink-50 text-pink-600 border-pink-300 hover:bg-pink-100'
+                        }`}
+                        style={{fontSize:'clamp(1.5rem,2.8vw,2rem)'}}>
+                        {o}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
