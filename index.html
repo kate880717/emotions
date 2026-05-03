@@ -1,846 +1,1457 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>감정 알기 대모험 ✨</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>감정 알기 대모험 ✨</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap');
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;margin:0;padding:0}
+body{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif;background:#dde3ee}
+#root{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:8px}
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
+#app{
+  width:100%;
+  max-width:1024px;
+  height:calc(100vh - 16px);
+  max-height:920px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:linear-gradient(145deg,#fff9fb 0%,#f0f4ff 100%);
+  border-radius:2rem;
+  box-shadow:0 30px 60px -15px rgba(0,0,0,.25);
+}
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+.card{background:#fff;border-radius:1.5rem;box-shadow:0 8px 24px rgba(0,0,0,.06)}
+.card-pink{border:4px solid #fbcfe8}
+.card-indigo{border:4px solid #c7d2fe}
+.card-amber{border:4px solid #fde68a}
+.card-emerald{border:4px solid #a7f3d0}
+.word-keep{word-break:keep-all}
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-    }
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.float{animation:float 3.5s ease-in-out infinite}
 
-    body {
-      font-family: 'Outfit', 'Malgun Gothic', sans-serif;
-      background: #dde3ee;
-    }
+@keyframes pop-in{0%{transform:scale(0) rotate(-180deg);opacity:0}60%{transform:scale(1.2) rotate(20deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.pop-in{animation:pop-in .6s cubic-bezier(.68,-.55,.27,1.55) forwards}
 
-    #root {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+@keyframes sticker-fly{0%{transform:translate(0,0) scale(0) rotate(0);opacity:0}30%{opacity:1;transform:translate(var(--tx,0),var(--ty,-50px)) scale(1.4) rotate(180deg)}100%{transform:translate(var(--tx,0),var(--ty,-200px)) scale(.8) rotate(360deg);opacity:0}}
+.sticker-fly{animation:sticker-fly 2s ease-out forwards;position:absolute;font-size:60px;pointer-events:none;z-index:100}
 
-    #app {
-      width: 100%;
-      max-width: 960px;
-      height: 96vh;
-      max-height: 860px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: linear-gradient(145deg, #fff9fb 0%, #f0f4ff 100%);
-      border-radius: 2.5rem;
-      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.25);
-    }
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:shake .4s}
 
-    .card {
-      background: #fff;
-      border-radius: 2rem;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-    }
+@keyframes bounce-in{0%{transform:scale(0)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+.bounce-in{animation:bounce-in .5s}
 
-    .card-pink {
-      border: 3px solid #fbcfe8;
-    }
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 0 0 rgba(236,72,153,.4)}50%{box-shadow:0 0 0 12px rgba(236,72,153,0)}}
+.pulse-glow{animation:pulse-glow 1.5s infinite}
 
-    .card-indigo {
-      border: 3px solid #c7d2fe;
-    }
+.tts-highlight{background:linear-gradient(180deg,transparent 60%,#fef08a 60%);transition:all .2s;font-weight:bold}
 
-    .card-amber {
-      border: 3px solid #fde68a;
-    }
+.btn{transition:transform .15s,box-shadow .15s;cursor:pointer}
+.btn:active{transform:scale(.95)}
+.btn-disabled{opacity:.4;cursor:not-allowed}
 
-    .word-keep {
-      word-break: keep-all;
-    }
+.scroll-y{overflow-y:auto}
+.scroll-y::-webkit-scrollbar{width:6px}
+.scroll-y::-webkit-scrollbar-thumb{background:#fbcfe8;border-radius:3px}
 
-    @keyframes float {
+.text-mega{font-size:clamp(2rem,4vw,3rem);line-height:1.3}
+.text-big{font-size:clamp(1.5rem,3vw,2.25rem);line-height:1.4}
+.text-mid{font-size:clamp(1.25rem,2.5vw,1.75rem);line-height:1.5}
 
-      0%,
-      100% {
-        transform: translateY(0)
-      }
+textarea{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif}
 
-      50% {
-        transform: translateY(-10px)
-      }
-    }
+/* 무드미터 사분면 */
+.mood-quad{transition:all .3s;cursor:pointer;border-radius:1rem}
+.mood-quad.active{transform:scale(1.05);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.mood-red{background:linear-gradient(135deg,#fecaca 0%,#fca5a5 100%);border:3px solid #ef4444}
+.mood-yellow{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:3px solid #f59e0b}
+.mood-blue{background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);border:3px solid #3b82f6}
+.mood-green{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border:3px solid #10b981}
+</style>
+<script>
+/* ── GAS 웹앱 URL ──────────────────────────────────── */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzpt0jaIX5GTVkyMSm4TWWpRFEt2Ift7SqZM4X2q6jTdGocNl0boxxVZNTto7jjROfe1A/exec";
 
-    .float {
-      animation: float 3.5s ease-in-out infinite;
-    }
+const gasGet = async (action) => {
+  try{
+    const r = await fetch(`${GAS_URL}?action=${action}`,{redirect:'follow'});
+    return JSON.parse(await r.text());
+  }catch(_){return null}
+};
+const gasPost = async (data) => {
+  try{
+    await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});
+  }catch(_){}
+};
 
-    .btn {
-      transition: transform .15s;
-      cursor: pointer;
-    }
+const SAMPLES = ['김민준','이하은','박서준','최지아'];
 
-    .btn:active {
-      transform: scale(.96);
-    }
+/* ── 무드미터 4사분면 정보 ──────────────────────────── */
+const QUADRANTS = {
+  red:    {name:'활기찬 힘듦', desc:'에너지 높음·기분 불쾌', color:'#ef4444', bg:'#fecaca', emoji:'🔥'},
+  yellow: {name:'활기찬 즐거움', desc:'에너지 높음·기분 유쾌', color:'#f59e0b', bg:'#fde68a', emoji:'☀️'},
+  blue:   {name:'잔잔한 힘듦', desc:'에너지 낮음·기분 불쾌', color:'#3b82f6', bg:'#bfdbfe', emoji:'💧'},
+  green:  {name:'잔잔한 평온', desc:'에너지 낮음·기분 유쾌', color:'#10b981', bg:'#a7f3d0', emoji:'🌿'},
+};
 
-    .scroll-y {
-      overflow-y: auto;
-    }
+/* ── 30개 감정 DB (시트가 비면 사용) - 무드미터 4사분면 ── */
+const EMOTION_DB = [
+  // yellow (활기+유쾌)
+  {id:'기쁘다',quad:'yellow',cat:'pos',emoji:'😄',desc:'기쁘다는 것은 좋은 일이 생겨서 마음이 환하게 웃는 거예요.',sit:'받고 싶던 선물을 받았을 때'},
+  {id:'신나다',quad:'yellow',cat:'pos',emoji:'🤩',desc:'신난다는 것은 너무 재미있어서 가만히 있을 수 없는 거예요.',sit:'놀이공원에 도착했을 때'},
+  {id:'설레다',quad:'yellow',cat:'pos',emoji:'💓',desc:'설렌다는 것은 좋은 일이 곧 일어날 것 같아 가슴이 두근거리는 거예요.',sit:'내일 소풍 간다는 소식을 들었을 때'},
+  {id:'뿌듯하다',quad:'yellow',cat:'pos',emoji:'💪',desc:'뿌듯하다는 것은 내가 해낸 일이 너무 멋져서 마음이 꽉 차는 거예요.',sit:'어려운 퍼즐을 다 맞췄을 때'},
+  {id:'자랑스럽다',quad:'yellow',cat:'pos',emoji:'🏅',desc:'자랑스럽다는 것은 내가 한 일이 대단해서 보여주고 싶은 거예요.',sit:'발표를 잘해서 칭찬받았을 때'},
+  {id:'반갑다',quad:'yellow',cat:'pos',emoji:'👋',desc:'반갑다는 것은 보고 싶었던 사람을 만나서 마음이 환해지는 거예요.',sit:'오랜만에 친한 친구를 만났을 때'},
+  {id:'고맙다',quad:'yellow',cat:'pos',emoji:'🙏',desc:'고맙다는 것은 누군가 나를 도와줘서 마음이 따뜻해지는 거예요.',sit:'친구가 지우개를 빌려줬을 때'},
+  {id:'궁금하다',quad:'yellow',cat:'pos',emoji:'🤔',desc:'궁금하다는 것은 알고 싶어서 마음이 간질거리는 거예요.',sit:'새로운 책을 펼쳤을 때'},
+  // red (활기+불쾌)
+  {id:'속상하다',quad:'red',cat:'neg',emoji:'😥',desc:'속상하다는 것은 일이 마음대로 안 돼서 마음이 콕콕 아픈 거예요.',sit:'열심히 만든 모래성이 무너졌을 때'},
+  {id:'억울하다',quad:'red',cat:'neg',emoji:'😩',desc:'억울하다는 것은 잘못하지 않았는데 오해받아서 답답한 거예요.',sit:'내가 안 그랬는데 의심받았을 때'},
+  {id:'화나다',quad:'red',cat:'neg',emoji:'😡',desc:'화난다는 것은 마음에 들지 않는 일이 생겨서 기분이 뜨거워지는 거예요.',sit:'동생이 내 장난감을 망가뜨렸을 때'},
+  {id:'짜증나다',quad:'red',cat:'neg',emoji:'😤',desc:'짜증난다는 것은 일이 자꾸 안 풀려서 마음이 까칠해지는 거예요.',sit:'신발 끈이 자꾸 풀릴 때'},
+  {id:'무섭다',quad:'red',cat:'neg',emoji:'👻',desc:'무섭다는 것은 나쁜 일이 생길까 봐 마음이 떨리는 거예요.',sit:'갑자기 천둥소리가 들릴 때'},
+  {id:'긴장되다',quad:'red',cat:'neg',emoji:'😬',desc:'긴장된다는 것은 잘 해야 한다는 생각에 마음이 빳빳해지는 거예요.',sit:'내가 발표할 차례가 되었을 때'},
+  {id:'조마조마하다',quad:'red',cat:'neg',emoji:'😨',desc:'조마조마하다는 것은 잘못될까 봐 마음이 콩닥거리는 거예요.',sit:'내 차례가 다가올 때'},
+  {id:'부럽다',quad:'red',cat:'neg',emoji:'🥺',desc:'부럽다는 것은 다른 사람이 가진 것이 좋아 보여서 갖고 싶은 거예요.',sit:'친구가 새 장난감을 가져왔을 때'},
+  // blue (잔잔+불쾌)
+  {id:'슬프다',quad:'blue',cat:'neg',emoji:'😢',desc:'슬프다는 것은 마음이 무거워져서 눈물이 날 것 같은 거예요.',sit:'소중한 인형을 잃어버렸을 때'},
+  {id:'외롭다',quad:'blue',cat:'neg',emoji:'😔',desc:'외롭다는 것은 같이 있을 사람이 없어서 마음이 텅 빈 것 같은 거예요.',sit:'쉬는 시간에 혼자 앉아 있을 때'},
+  {id:'서운하다',quad:'blue',cat:'neg',emoji:'🥹',desc:'서운하다는 것은 기대했던 일이 안 돼서 마음이 살짝 시린 거예요.',sit:'친구가 내 생일을 잊어버렸을 때'},
+  {id:'지치다',quad:'blue',cat:'neg',emoji:'😮‍💨',desc:'지친다는 것은 너무 많이 해서 몸과 마음에 힘이 없는 거예요.',sit:'운동회에서 종일 뛰어다닌 후'},
+  {id:'심심하다',quad:'blue',cat:'neg',emoji:'😑',desc:'심심하다는 것은 할 일이 없어서 시간이 너무 천천히 가는 거예요.',sit:'비 와서 밖에 못 나갈 때'},
+  {id:'미안하다',quad:'blue',cat:'neg',emoji:'😞',desc:'미안하다는 것은 내가 잘못한 것 같아서 마음이 작아지는 거예요.',sit:'친구의 물건을 망가뜨렸을 때'},
+  {id:'부끄럽다',quad:'blue',cat:'neg',emoji:'😳',desc:'부끄럽다는 것은 다른 사람이 봐서 얼굴이 빨개지는 거예요.',sit:'실수해서 친구들이 웃을 때'},
+  {id:'아쉽다',quad:'blue',cat:'neg',emoji:'😕',desc:'아쉽다는 것은 더 잘하고 싶었는데 끝나서 마음이 빠진 듯한 거예요.',sit:'재미있는 놀이가 끝났을 때'},
+  // green (잔잔+유쾌)
+  {id:'편안하다',quad:'green',cat:'pos',emoji:'😌',desc:'편안하다는 것은 마음이 폭신폭신해서 기분이 좋은 거예요.',sit:'따뜻한 이불 속에 들어갔을 때'},
+  {id:'안심되다',quad:'green',cat:'pos',emoji:'😊',desc:'안심된다는 것은 걱정이 사라져서 마음이 푹 놓이는 거예요.',sit:'엄마를 다시 만났을 때'},
+  {id:'뭉클하다',quad:'green',cat:'pos',emoji:'💖',desc:'뭉클하다는 것은 따뜻한 감동이 가슴 속에서 천천히 차오르는 거예요.',sit:'선생님의 편지를 읽었을 때'},
+  {id:'개운하다',quad:'green',cat:'pos',emoji:'🛁',desc:'개운하다는 것은 답답한 게 사라져서 시원해지는 거예요.',sit:'운동 후 깨끗하게 씻고 나왔을 때'},
+  {id:'차분하다',quad:'green',cat:'pos',emoji:'😇',desc:'차분하다는 것은 마음이 잔잔한 호수처럼 고요해지는 거예요.',sit:'조용히 책을 읽고 있을 때'},
+  {id:'감사하다',quad:'green',cat:'pos',emoji:'🌷',desc:'감사하다는 것은 잔잔히 고마운 마음이 차오르는 거예요.',sit:'하루를 잘 마무리했을 때'},
+];
 
-    .scroll-y::-webkit-scrollbar {
-      display: none;
-    }
-  </style>
+const QUIZ_Q = [
+  {id:1,q:'받고 싶던 선물을 받았을 때 기분은?',img:'🎁',opts:['기쁘다','슬프다'],a:'기쁘다',fb:'맞아요! 원하던 것이 생기면 마음이 환하게 웃는 "기쁨"이에요.',wfb:'음~ 선물을 받았을 때는 슬프기보다 기쁜 마음이 더 어울려요!'},
+  {id:2,q:'내일 소풍 간다는 소식을 들었어요!',img:'🚌',opts:['설레다','무섭다'],a:'설레다',fb:'두근두근 가슴이 뛰는 마음을 "설렘"이라고 해요!',wfb:'소풍은 무서운 일이 아니에요. 좋은 일을 기다릴 때의 마음을 떠올려봐요.'},
+  {id:3,q:'나 혼자 어려운 수학 문제를 풀었어요!',img:'📒',opts:['뿌듯하다','심심하다'],a:'뿌듯하다',fb:'내가 해낸 일이 멋져서 마음이 꽉 차는 것을 "뿌듯함"이라고 해요!',wfb:'심심한 게 아니라, 해냈을 때의 마음을 떠올려봐요!'},
+  {id:4,q:'엄마한테 꾸중을 들어서 눈물이 나요.',img:'😢',opts:['슬프다','뿌듯하다'],a:'슬프다',fb:'마음이 무거워져 눈물 나는 것을 "슬픔"이라고 해요. 슬플 때는 참지 말아요.',wfb:'꾸중을 들었을 때 뿌듯한 마음은 잘 안 들어요!'},
+  {id:5,q:'내가 안 했는데 내가 한 거라고 오해받았어요.',img:'🤨',opts:['억울하다','편안하다'],a:'억울하다',fb:'잘못이 없는데 오해받을 때의 답답한 마음을 "억울함"이라고 해요.',wfb:'오해를 받으면 편안할 수가 없어요!'},
+  {id:6,q:'캄캄한 곳에서 천둥소리가 들려요.',img:'🌩',opts:['무섭다','신나다'],a:'무섭다',fb:'나쁜 일이 생길까 봐 마음이 떨리는 것을 "무서움"이라고 해요.',wfb:'천둥소리가 신나기는 어려워요. 마음이 떨리는 느낌을 떠올려봐요!'},
+  {id:7,q:'쉬는 시간에 친구가 없어 혼자 앉아 있어요.',img:'😔',opts:['외롭다','신나다'],a:'외롭다',fb:'같이 있을 사람이 없어 마음이 텅 빈 듯한 게 "외로움"이에요.',wfb:'혼자 있을 때 신나기는 힘들어요!'},
+  {id:8,q:'친구가 내 생일을 잊어버렸어요.',img:'🎂',opts:['서운하다','뿌듯하다'],a:'서운하다',fb:'기대했던 일이 안 돼서 마음이 살짝 시린 것을 "서운함"이라 해요.',wfb:'뿌듯하기보다 마음이 살짝 시려요!'},
+  {id:9,q:'선생님께서 정성 어린 편지를 주셨어요.',img:'💌',opts:['뭉클하다','무섭다'],a:'뭉클하다',fb:'따뜻한 감동이 가슴 속에서 차오르는 것을 "뭉클함"이라고 해요.',wfb:'편지는 무섭지 않아요. 따뜻한 감동을 떠올려봐요!'},
+  {id:10,q:'운동 후 깨끗하게 씻고 나왔어요.',img:'🛁',opts:['개운하다','짜증나다'],a:'개운하다',fb:'몸과 마음이 시원해지는 것을 "개운함"이라고 해요!',wfb:'씻고 나면 시원해지지 짜증 나지 않아요!'},
+  {id:11,q:'길을 잃었다가 엄마를 다시 만났어요.',img:'🤗',opts:['안심되다','서운하다'],a:'안심되다',fb:'걱정이 사라져 마음이 푹 놓이는 것을 "안심됨"이라고 해요.',wfb:'엄마를 다시 만났을 때 마음이 푹 놓여요!'},
+  {id:12,q:'발표를 잘해서 선생님께 칭찬받았어요.',img:'🎤',opts:['자랑스럽다','부끄럽다'],a:'자랑스럽다',fb:'어깨가 으쓱해지는 마음을 "자랑스러움"이라고 해요!',wfb:'칭찬받으면 부끄럽기도 하지만, 어깨가 으쓱해지는 마음이 더 가까워요!'},
+];
 
-  <script>
-    /* ── GAS 웹앱 URL ─────────────────────────────────────────── */
-    /* GitHub Pages에서도 use GET request (query param) to avoid CORS */
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzpt0jaIX5GTVkyMSm4TWWpRFEt2Ift7SqZM4X2q6jTdGocNl0boxxVZNTto7jjROfe1A/exec";
+/* ── 효과음 (Web Audio API) ──────────── */
+let audioCtx = null;
+const getCtx = () => { if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; };
+const playTone = (freqs, duration=.15, type='sine', vol=.15) => {
+  try{
+    const ctx = getCtx();
+    freqs.forEach((f,i)=>{
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = type; osc.frequency.value = f;
+      g.gain.value = 0;
+      g.gain.linearRampToValueAtTime(vol, ctx.currentTime + i*duration + .01);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + (i+1)*duration);
+      osc.connect(g); g.connect(ctx.destination);
+      osc.start(ctx.currentTime + i*duration);
+      osc.stop(ctx.currentTime + (i+1)*duration);
+    });
+  }catch(_){}
+};
+const sfx = {
+  correct: (on) => on && playTone([523,659,784,1047],.1,'sine',.15),
+  wrong:   (on) => on && playTone([400,300],.18,'sine',.1),  // 부드러운 오답음
+  click:   (on) => on && playTone([800],.05,'sine',.08),
+  win:     (on) => on && playTone([523,659,784,1047,1319],.12,'sine',.18),
+  star:    (on) => on && playTone([1047,1319,1568],.1,'triangle',.12),
+};
 
-    /* ── GAS 호출 헬퍼: GET=조회, POST=저장 ──────────────────────
-       GitHub Pages → GET 방식은 GAS redirect 이후 응답을 읽을 수 없어서
-       실제 학생 명단은 시트에서 가져오거나 아래 SAMPLES로 fallback. ──── */
-    const gasGet = async (action) => {
-      try {
-        const r = await fetch(`${GAS_URL}?action=${action}`, { redirect: 'follow' });
-        const text = await r.text();
-        return JSON.parse(text);
-      } catch (_) { return null; }
+/* ── 자연스러운 한국어 여성 음성 우선 선택 ──────────────── */
+let cachedVoice = null;
+const getKoVoice = () => {
+  if(cachedVoice) return cachedVoice;
+  const voices = window.speechSynthesis.getVoices();
+  if(!voices || voices.length === 0) return null;
+
+  // 1순위: Google 한국어 여성 (클라우드)
+  let v = voices.find(x => x.lang === 'ko-KR' && x.name.toLowerCase().includes('google') && !x.localService);
+  // 2순위: Wavenet/Neural2 여성 (A는 보통 여성)
+  if(!v) v = voices.find(x => x.lang === 'ko-KR' && /wavenet|neural/i.test(x.name) && /-a/i.test(x.name));
+  // 3순위: 그냥 Wavenet/Neural2
+  if(!v) v = voices.find(x => x.lang === 'ko-KR' && /wavenet|neural/i.test(x.name));
+  // 4순위: 자연스러움 키워드
+  if(!v) v = voices.find(x => x.lang === 'ko-KR' && /premium|enhanced|natural/i.test(x.name));
+  // 5순위: 한국어 여성 키워드 (Yuna, Heami 등 macOS/iOS)
+  if(!v) v = voices.find(x => x.lang === 'ko-KR' && /yuna|heami|hyemi|유나|혜미/i.test(x.name));
+  // 6순위: 그냥 한국어
+  if(!v) v = voices.find(x => x.lang === 'ko-KR');
+  cachedVoice = v;
+  return v;
+};
+
+const speak = (text, on, onWord=null, onEnd=null) => {
+  if(!on || !window.speechSynthesis) { onEnd && onEnd(); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ko-KR';
+  u.rate = 0.95;    // 유치원 선생님처럼 또박또박 (조금 느리게)
+  u.pitch = 1.1;    // 살짝 높여서 친근하게 (갈라짐 방지: 1.0~1.2 권장)
+  u.volume = 1.0;
+  const v = getKoVoice();
+  if(v) u.voice = v;
+  if(onWord) u.onboundary = (e) => { if(e.name === 'word' || e.name === 'sentence') onWord(e.charIndex); };
+  if(onEnd) u.onend = onEnd;
+  window.speechSynthesis.speak(u);
+};
+
+/* ── 수료증 + 배움기록표 통합 PNG ─────────────────────── */
+const downloadCertificate = (name, learned, stars, history, selfSticker) => {
+  const cv = document.createElement('canvas');
+  cv.width = 1200; cv.height = 1700;
+  const ctx = cv.getContext('2d');
+
+  // roundRect 폴리필 (구버전 브라우저 대비)
+  if(!ctx.roundRect){
+    ctx.roundRect = function(x, y, w, h, r){
+      if(typeof r === 'number') r = [r,r,r,r];
+      this.beginPath();
+      this.moveTo(x+r[0], y);
+      this.lineTo(x+w-r[1], y);
+      this.quadraticCurveTo(x+w, y, x+w, y+r[1]);
+      this.lineTo(x+w, y+h-r[2]);
+      this.quadraticCurveTo(x+w, y+h, x+w-r[2], y+h);
+      this.lineTo(x+r[3], y+h);
+      this.quadraticCurveTo(x, y+h, x, y+h-r[3]);
+      this.lineTo(x, y+r[0]);
+      this.quadraticCurveTo(x, y, x+r[0], y);
+      this.closePath();
+      return this;
     };
-    const gasPost = async (data) => {
-      try {
-        // no-cors: GitHub Pages → GAS POST 시 CORS 우회 (응답은 읽을 수 없지만 전송은 됨)
-        await fetch(GAS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify(data)
-        });
-      } catch (_) { }
-    };
+  }
 
-    /* ── 기본 학생 목록 (시트 연결 안 되면 사용) ─────────────────── */
-    const SAMPLES = ['김민준', '이하은', '박서준', '최지아'];
+  // 배경
+  ctx.fillStyle = '#fffcf4'; ctx.fillRect(0, 0, 1200, 1700);
+  ctx.strokeStyle = '#f472b6'; ctx.lineWidth = 30; ctx.strokeRect(30, 30, 1140, 1640);
+  ctx.strokeStyle = '#fce7f3'; ctx.lineWidth = 10; ctx.strokeRect(60, 60, 1080, 1580);
 
-    /* ── 감정 DB ──────────────────────────────────────────────── */
-    const EMOTION_DB = [
-      { id: '기쁘다', cat: 'pos', emoji: '😄', hanja: '', desc: '원하던 일이 생겨서 마음이 참 즐거워요.', sit: '시험에서 100점을 받았을 때' },
-      { id: '슬프다', cat: 'neg', emoji: '😢', hanja: '', desc: '마음이 아프고 눈물이 날 것만 같은 느낌이에요.', sit: '소중한 인형을 잃어버렸을 때' },
-      { id: '뿌듯하다', cat: 'pos', emoji: '💪', hanja: '', desc: '해야 할 일을 멋지게 해내어 기분이 꽉 찬 느낌이에요.', sit: '어려운 퍼즐을 나 혼자 다 맞췄을 때' },
-      { id: '설레다', cat: 'pos', emoji: '💓', hanja: '', desc: '기대되는 일 때문에 가슴이 두근대고 떨려요.', sit: '내일 소풍 간다는 소식을 들었을 때' },
-      { id: '뭉클하다', cat: 'pos', emoji: '💖', hanja: '', desc: '따뜻한 감동이 가슴속에서 울컥 솟아오르는 느낌이에요.', sit: '선생님의 정성 어린 편지를 읽었을 때' },
-      { id: '개운하다', cat: 'pos', emoji: '🛁', hanja: '', desc: '몸이나 마음이 맑고 시원해져서 기분이 가벼워요.', sit: '운동 후 깨끗하게 씻고 나왔을 때' },
-      { id: '안심되다', cat: 'pos', emoji: '😌', hanja: '安心', desc: '걱정하던 일이 사라져서 마음이 푹 놓여요.', sit: '길을 잃었다가 엄마를 다시 만났을 때' },
-      { id: '어색하다', cat: 'neg', emoji: '😅', hanja: '語塞', desc: '지내는 분위기가 서먹서먹하고 불편한 느낌이에요.', sit: '처음 본 친구와 단둘이 짝이 되었을 때' },
-      { id: '무섭다', cat: 'neg', emoji: '👻', hanja: '', desc: '위험을 느끼거나 나쁜 일이 생길까 봐 두려워요.', sit: '갑자기 불이 꺼지고 천둥소리가 들릴 때' },
-      { id: '조마조마하다', cat: 'neg', emoji: '😨', hanja: '', desc: '무언가 잘못될까 봐 마음이 불안하고 떨려요.', sit: '발표 순서를 기다리며 내 차례가 다가올 때' },
-      { id: '자랑스럽다', cat: 'pos', emoji: '🏅', hanja: '', desc: '내가 한 일이 대단해서 스스로가 참 훌륭하다고 느껴요.', sit: '발표를 아주 잘해서 선생님께 칭찬받았을 때' },
-      { id: '속상하다', cat: 'neg', emoji: '😥', hanja: '', desc: '일이 마음대로 되지 않아 화가 나고 슬픈 상태예요.', sit: '열심히 만든 모래성이 무너졌을 때' },
-      { id: '억울하다', cat: 'neg', emoji: '😩', hanja: '抑鬱', desc: '잘못하지 않았는데 오해나 비난을 받아 답답하고 화나요.', sit: '내가 안 그랬는데 범인으로 의심받았을 때' },
-    ];
+  ctx.textAlign = 'center';
 
-    /* ── 퀴즈 문제 ─────────────────────────────────────────────── */
-    const QUIZ_Q = [
-      { id: 1, q: '받고 싶던 선물을 받았을 때 기분은?', img: '🎁', opts: ['기쁘다', '슬프다'], a: '기쁘다', fb: '원하던 것이 생기면 기쁜 마음이 가득해요!' },
-      { id: 2, q: '엄마한테 꾸중을 들어서 눈물이 나요.', img: '😢', opts: ['뿌듯하다', '슬프다'], a: '슬프다', fb: '슬플 때는 참지 말고 마음을 달래주는 게 중요해요.' },
-      { id: 3, q: '나 혼자 어려운 수학 문제를 다 풀었어요!', img: '📒', opts: ['뿌듯하다', '무섭다'], a: '뿌듯하다', fb: '스스로의 힘으로 해내면 뿌듯함이 솟아나요.' },
-      { id: 4, q: '친구가 나를 비웃어서 마음이 아파요.', img: '💔', opts: ['설레다', '속상하다'], a: '속상하다', fb: '다른 사람의 말에 상처를 받으면 속상해요.' },
-      { id: 5, q: '선생님이 주신 따뜻한 편지를 읽었어요.', img: '💌', opts: ['뭉클하다', '무섭다'], a: '뭉클하다', fb: '가슴 속 따뜻한 감동이 느껴지는 걸 "뭉클하다"고 해요.' },
-      { id: 6, q: '내가 안 했는데 내가 한 거라고 오해받았어요.', img: '🤔', opts: ['억울하다', '개운하다'], a: '억울하다', fb: '진심을 몰라줄 때 가장 억울한 마음이 들죠.' },
-      { id: 7, q: '처음 보는 친구와 짝꿍이 되었어요.', img: '👬', opts: ['어색하다', '기쁘다'], a: '어색하다', fb: '아직 친하지 않을 때는 어색할 수 있어요.' },
-      { id: 8, q: '멋진 그림을 그려서 교실에 붙여졌어요!', img: '🎨', opts: ['자랑스럽다', '무섭다'], a: '자랑스럽다', fb: '노력으로 좋은 결과가 나오면 자랑스러운 마음이 생겨요.' },
-    ];
+  // ═══ 상단: 수료증 ═══
+  ctx.font = 'bold 90px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  ctx.fillStyle = '#db2777';
+  ctx.fillText('🏆 감정 알기 대장 상장 🏆', 600, 180);
 
-    /* ── TTS ─────────────────────────────────────────────────── */
-    const speak = (text, on) => {
-      if (!on || !window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'ko-KR'; u.rate = 0.95;
-      window.speechSynthesis.speak(u);
-    };
+  ctx.font = 'bold 50px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  ctx.fillStyle = '#1e293b';
+  ctx.fillText('감정 알기 대모험 대장정', 600, 260);
 
-    /* ── 수료증 PNG 저장 ─────────────────────────────────────── */
-    const downloadCert = (name) => {
-      const cv = document.createElement('canvas');
-      cv.width = 1200; cv.height = 1500;
-      const ctx = cv.getContext('2d');
-      // 배경
-      ctx.fillStyle = '#fffcf4'; ctx.fillRect(0, 0, 1200, 1500);
-      ctx.strokeStyle = '#f472b6'; ctx.lineWidth = 40; ctx.strokeRect(40, 40, 1120, 1420);
-      ctx.strokeStyle = '#fce7f3'; ctx.lineWidth = 15; ctx.strokeRect(70, 70, 1060, 1360);
-      // 제목
-      ctx.textAlign = 'center';
-      ctx.font = 'bold 100px sans-serif'; ctx.fillStyle = '#db2777';
-      ctx.fillText('🏆 수 료 증 🏆', 600, 250);
-      ctx.font = 'bold 55px sans-serif'; ctx.fillStyle = '#1e293b';
-      ctx.fillText('감정 알기 대모험 대장정', 600, 370);
-      // 이름
-      ctx.font = '900 90px sans-serif'; ctx.fillStyle = '#db2777';
-      ctx.fillText(`${name} 어린이`, 600, 580);
-      // 본문
-      ctx.font = '50px sans-serif'; ctx.fillStyle = '#475569';
-      ['위 어린이는 용기 있게 마음의 보물을 찾아', '자신의 감정을 바르게 표현하는 힘을 길렀기에', '이 증서를 수여하며 칭찬합니다.'].forEach((l, i) => ctx.fillText(l, 600, 780 + i * 90));
-      // 이모지
-      ctx.font = '150px serif'; ctx.fillText('⭐🏅⭐', 600, 1150);
-      // 날짜
-      ctx.font = 'bold 45px sans-serif'; ctx.fillStyle = '#94a3b8';
-      ctx.fillText(new Date().toLocaleDateString('ko-KR'), 600, 1370);
-      ctx.fillText('감정 알기 요정 드림 🧚', 600, 1440);
-      // 다운로드
-      const a = document.createElement('a');
-      a.download = `수료증_${name}.png`;
-      a.href = cv.toDataURL('image/png');
-      a.click();
-    };
-  </script>
+  ctx.font = '900 80px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  ctx.fillStyle = '#db2777';
+  ctx.fillText(`${name||'친구'} 어린이`, 600, 380);
+
+  ctx.font = '40px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  ctx.fillStyle = '#475569';
+  ['위 어린이는 용기 있게 마음의 보물을 찾아', '자신의 감정을 바르게 표현하는 힘을 길렀기에', '이 상장을 수여하며 칭찬합니다.'].forEach((l, i) => ctx.fillText(l, 600, 460 + i * 60));
+
+  // 별점
+  const safeStars = Math.max(0, Math.min(5, Number(stars) || 0));
+  ctx.font = '70px serif';
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillText('⭐'.repeat(safeStars) + '☆'.repeat(5 - safeStars), 600, 720);
+
+  // 자기 칭찬
+  if (selfSticker) {
+    ctx.font = 'bold 36px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+    ctx.fillStyle = '#db2777';
+    ctx.fillText(`"${selfSticker}"`, 600, 780);
+  }
+
+  // 구분선
+  ctx.strokeStyle = '#fbcfe8';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(150, 830);
+  ctx.lineTo(1050, 830);
+  ctx.stroke();
+
+  // ═══ 하단: 배움 기록표 ═══
+  ctx.font = 'bold 56px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  ctx.fillStyle = '#7c3aed';
+  ctx.fillText('📋 오늘의 배움 기록표', 600, 910);
+
+  // 통계
+  const safeHistory = Array.isArray(history) ? history : [];
+  const safeLearned = Array.isArray(learned) ? learned : [];
+  const correctCnt = safeHistory.filter(h => h && h.ok).length;
+  const totalCnt = safeHistory.length;
+  const learnedCnt = safeLearned.length;
+  const accuracy = totalCnt > 0 ? Math.round(correctCnt / totalCnt * 100) : 0;
+
+  // 4개 통계 박스
+  const stats = [
+    {label: '풀어본 문제', val: `${totalCnt}개`, color: '#fce7f3'},
+    {label: '맞힌 문제', val: `${correctCnt}개`, color: '#d1fae5'},
+    {label: '정답률', val: `${accuracy}%`, color: '#dbeafe'},
+    {label: '배운 감정', val: `${learnedCnt}개`, color: '#fef3c7'},
+  ];
+  const boxW = 230, boxH = 130, gap = 20, startX = 90;
+  stats.forEach((s, i) => {
+    const x = startX + i * (boxW + gap);
+    ctx.fillStyle = s.color;
+    ctx.beginPath();
+    ctx.roundRect(x, 960, boxW, boxH, 16);
+    ctx.fill();
+
+    ctx.font = 'bold 26px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+    ctx.fillStyle = '#64748b';
+    ctx.fillText(s.label, x + boxW / 2, 1000);
+
+    ctx.font = 'bold 48px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+    ctx.fillStyle = '#1e293b';
+    ctx.fillText(s.val, x + boxW / 2, 1060);
+  });
+
+  // 배운 감정 단어들
+  ctx.font = 'bold 36px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  ctx.fillStyle = '#7c3aed';
+  ctx.fillText('✨ 오늘 배운 감정', 600, 1170);
+
+  if (safeLearned.length > 0) {
+    ctx.font = 'bold 32px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+    ctx.fillStyle = '#db2777';
+    const lines = [];
+    for (let i = 0; i < safeLearned.length; i += 5) {
+      lines.push(safeLearned.slice(i, i + 5).join(' · '));
+    }
+    lines.slice(0, 3).forEach((line, i) => ctx.fillText(line, 600, 1220 + i * 50));
+  } else {
+    ctx.font = '28px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText('(아직 없어요)', 600, 1220);
+  }
+
+  // 문제 풀이 미니 차트
+  ctx.font = 'bold 30px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  ctx.fillStyle = '#475569';
+  ctx.fillText('🎯 문제 풀이 결과', 600, 1430);
+
+  const dotR = 18, dotGap = 12;
+  const showCnt = Math.min(safeHistory.length, 15);
+  if(showCnt > 0){
+    const totalW = showCnt * (dotR * 2 + dotGap) - dotGap;
+    let dotX = 600 - totalW / 2;
+    safeHistory.slice(0, 15).forEach((h, i) => {
+      ctx.beginPath();
+      ctx.arc(dotX + dotR, 1490, dotR, 0, Math.PI * 2);
+      ctx.fillStyle = h && h.ok ? '#10b981' : '#f59e0b';
+      ctx.fill();
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillStyle = 'white';
+      ctx.fillText(h && h.ok ? '○' : '△', dotX + dotR, 1498);
+      dotX += dotR * 2 + dotGap;
+    });
+    if (safeHistory.length > 15) {
+      ctx.font = '20px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(`+ 외 ${safeHistory.length - 15}개`, 600, 1545);
+    }
+  }
+
+  // 푸터
+  ctx.font = 'bold 32px "Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  ctx.fillStyle = '#94a3b8';
+  ctx.fillText(new Date().toLocaleDateString('ko-KR'), 600, 1610);
+  ctx.fillText('감정 알기 요정 드림 🧚', 600, 1650);
+
+  const a = document.createElement('a');
+  a.download = `상장_배움기록표_${name || '친구'}.png`;
+  a.href = cv.toDataURL('image/png');
+  a.click();
+};
+</script>
 </head>
-
 <body>
-  <div id="root">
-    <div id="app"></div>
+<div id="root"><div id="app"></div></div>
+
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback} = React;
+
+/* 헤더 */
+const Header = ({label, soundOn, toggleSound}) => (
+  <div className="flex items-center justify-between px-5 py-3 shrink-0">
+    <div className="flex items-center gap-2">
+      <button onClick={()=>{if(confirm('처음으로 돌아갈까요?'))window.location.reload()}}
+        className="btn flex items-center justify-center w-11 h-11 bg-white rounded-2xl border-2 border-slate-100 text-slate-400 shadow-sm text-2xl">
+        🏠
+      </button>
+      <span className="text-base font-black text-slate-500 bg-white px-4 py-2 rounded-full border-2 border-slate-100 shadow-sm">
+        {label}
+      </span>
+    </div>
+    <button onClick={toggleSound}
+      className={`btn w-12 h-12 rounded-2xl border-2 shadow-sm text-2xl ${soundOn?'bg-pink-100 text-pink-500 border-pink-300':'bg-white text-slate-300 border-slate-200'}`}>
+      {soundOn?'🔊':'🔇'}
+    </button>
   </div>
+);
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef, useCallback } = React;
+/* 마스코트 */
+const Mascot = ({size=90}) => (
+  <svg width={size} height={size*1.2} viewBox="0 0 100 120" fill="none">
+    <circle cx="50" cy="70" r="38" fill="white" stroke="#f472b6" strokeWidth="4.5"/>
+    <path d="M34 20 L36 43" stroke="#f472b6" strokeWidth="9" strokeLinecap="round"/>
+    <path d="M66 20 L64 43" stroke="#f472b6" strokeWidth="9" strokeLinecap="round"/>
+    <circle cx="40" cy="68" r="3.5" fill="#1e293b"/>
+    <circle cx="60" cy="68" r="3.5" fill="#1e293b"/>
+    <path d="M43 85 Q50 92 57 85" stroke="#f472b6" strokeWidth="2.5" strokeLinecap="round"/>
+  </svg>
+);
 
-    /* ── 아이콘 ─────────────────────────────────────────────────── */
-    const HomeIcon = () => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        <polyline points="9 22 9 12 15 12 15 22" />
-      </svg>
-    );
+/* 칭찬 스티커 폭발 */
+const StickerBurst = ({trigger}) => {
+  const [stickers, setStickers] = useState([]);
+  useEffect(() => {
+    if(!trigger) return;
+    const emojis = ['⭐','💖','🌸','✨','🌟','💫','🏵️','🎀'];
+    const newStickers = Array.from({length:12}).map((_,i)=>({
+      id: Date.now()+i,
+      emoji: emojis[Math.floor(Math.random()*emojis.length)],
+      tx: (Math.random()-0.5)*400,
+      ty: -100 - Math.random()*200,
+      delay: Math.random()*0.3,
+    }));
+    setStickers(newStickers);
+    setTimeout(()=>setStickers([]), 2200);
+  }, [trigger]);
+  return (
+    <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-30">
+      {stickers.map(s => (
+        <span key={s.id} className="sticker-fly"
+          style={{'--tx':`${s.tx}px`,'--ty':`${s.ty}px`,animationDelay:`${s.delay}s`}}>
+          {s.emoji}
+        </span>
+      ))}
+    </div>
+  );
+};
 
-    /* ── 상단 헤더 (한글 레이블) ─────────────────────────────────── */
-    const Header = ({ label, soundOn, toggleSound }) => (
-      <div className="flex items-center justify-between px-6 py-4 shrink-0">
-        <div className="flex items-center gap-3">
-          <button onClick={() => window.location.reload()}
-            className="btn flex items-center justify-center w-10 h-10 bg-white rounded-xl border-2 border-slate-100 text-slate-400 shadow-sm">
-            <HomeIcon />
-          </button>
-          <span className="text-base font-black text-slate-400 bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm">
-            {label}
-          </span>
+/* 글자 하이라이트 */
+const HighlightedText = ({text, highlightIdx, className=""}) => {
+  if(highlightIdx < 0) return <span className={className}>{text}</span>;
+  const before = text.slice(0, highlightIdx);
+  const rest = text.slice(highlightIdx);
+  const wordEnd = rest.search(/[\s.,!?]/);
+  const word = wordEnd > 0 ? rest.slice(0, wordEnd) : rest;
+  const after = wordEnd > 0 ? rest.slice(wordEnd) : '';
+  return (
+    <span className={className}>
+      {before}<span className="tts-highlight">{word}</span>{after}
+    </span>
+  );
+};
+
+/* 무드미터 - 4사분면 */
+const MoodMeter = ({activeQuad, emotion, size='normal'}) => {
+  const isLarge = size === 'large';
+  const cellH = isLarge ? 'h-44' : 'h-32';
+  return (
+    <div className="relative w-full max-w-2xl mx-auto">
+      {/* 축 라벨 */}
+      <div className="text-center text-base font-black text-slate-500 mb-1">⬆️ 활기참</div>
+      <div className="grid grid-cols-2 gap-2 relative">
+        {/* 가로축 라벨 (왼쪽) */}
+        <div className="absolute -left-7 top-1/2 -translate-y-1/2 -rotate-90 text-base font-black text-slate-500 whitespace-nowrap">
+          ⬅️ 힘듦
         </div>
-        <button onClick={toggleSound}
-          className={`btn w-12 h-12 rounded-xl border-2 shadow-sm text-2xl
-        ${soundOn ? 'bg-pink-100 text-pink-500 border-pink-200' : 'bg-white text-slate-300 border-slate-100'}`}>
-          {soundOn ? '🔊' : '🔇'}
+        {/* 가로축 라벨 (오른쪽) */}
+        <div className="absolute -right-7 top-1/2 -translate-y-1/2 rotate-90 text-base font-black text-slate-500 whitespace-nowrap">
+          유쾌 ➡️
+        </div>
+
+        {/* 빨강 (왼쪽 위) */}
+        <div className={`mood-quad mood-red ${cellH} flex flex-col items-center justify-center p-3 ${activeQuad==='red'?'active':''}`}>
+          <div className="text-2xl mb-1">🔥</div>
+          <div className="text-base font-black text-red-700">활기찬 힘듦</div>
+          {activeQuad === 'red' && emotion && (
+            <div className="mt-1 bg-white/80 rounded-full px-3 py-1 font-black text-red-600 bounce-in">
+              {emotion.emoji} {emotion.id}
+            </div>
+          )}
+        </div>
+        {/* 노랑 (오른쪽 위) */}
+        <div className={`mood-quad mood-yellow ${cellH} flex flex-col items-center justify-center p-3 ${activeQuad==='yellow'?'active':''}`}>
+          <div className="text-2xl mb-1">☀️</div>
+          <div className="text-base font-black text-amber-700">활기찬 즐거움</div>
+          {activeQuad === 'yellow' && emotion && (
+            <div className="mt-1 bg-white/80 rounded-full px-3 py-1 font-black text-amber-600 bounce-in">
+              {emotion.emoji} {emotion.id}
+            </div>
+          )}
+        </div>
+        {/* 파랑 (왼쪽 아래) */}
+        <div className={`mood-quad mood-blue ${cellH} flex flex-col items-center justify-center p-3 ${activeQuad==='blue'?'active':''}`}>
+          <div className="text-2xl mb-1">💧</div>
+          <div className="text-base font-black text-blue-700">잔잔한 힘듦</div>
+          {activeQuad === 'blue' && emotion && (
+            <div className="mt-1 bg-white/80 rounded-full px-3 py-1 font-black text-blue-600 bounce-in">
+              {emotion.emoji} {emotion.id}
+            </div>
+          )}
+        </div>
+        {/* 초록 (오른쪽 아래) */}
+        <div className={`mood-quad mood-green ${cellH} flex flex-col items-center justify-center p-3 ${activeQuad==='green'?'active':''}`}>
+          <div className="text-2xl mb-1">🌿</div>
+          <div className="text-base font-black text-emerald-700">잔잔한 평온</div>
+          {activeQuad === 'green' && emotion && (
+            <div className="mt-1 bg-white/80 rounded-full px-3 py-1 font-black text-emerald-600 bounce-in">
+              {emotion.emoji} {emotion.id}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="text-center text-base font-black text-slate-500 mt-1">⬇️ 잔잔함</div>
+    </div>
+  );
+};
+
+/* 🎙️ 녹음 + STT + 키보드 */
+const VoiceRecorder = ({prompt, example, onComplete, soundOn, color='pink'}) => {
+  const [mode, setMode] = useState('idle');
+  const [transcript, setTranscript] = useState('');
+  const [textInput, setTextInput] = useState('');
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [audioB64, setAudioB64] = useState(null);
+  const [interimText, setInterimText] = useState('');
+  const [recDuration, setRecDuration] = useState(0);
+
+  const mrRef = useRef(null);
+  const chunksRef = useRef([]);
+  const recRef = useRef(null);
+  const timerRef = useRef(null);
+
+  const colorMap = {
+    pink: {bg:'bg-pink-500',hover:'hover:bg-pink-600',light:'bg-pink-50',border:'border-pink-200',text:'text-pink-600'},
+    indigo: {bg:'bg-indigo-500',hover:'hover:bg-indigo-600',light:'bg-indigo-50',border:'border-indigo-200',text:'text-indigo-600'},
+    emerald: {bg:'bg-emerald-500',hover:'hover:bg-emerald-600',light:'bg-emerald-50',border:'border-emerald-200',text:'text-emerald-600'},
+  };
+  const c = colorMap[color] || colorMap.pink;
+
+  const startRec = async () => {
+    sfx.click(soundOn);
+    try {
+      const stream = window.__permStream;
+      const isStreamActive = stream && stream.getAudioTracks().some(t=>t.readyState==='live');
+      const activeStream = isStreamActive ? stream : await navigator.mediaDevices.getUserMedia({audio:true});
+      window.__permStream = activeStream;
+
+      let mimeType = 'audio/webm';
+      if(!MediaRecorder.isTypeSupported(mimeType)){
+        if(MediaRecorder.isTypeSupported('audio/mp4')) mimeType = 'audio/mp4';
+        else mimeType = '';
+      }
+      const mr = mimeType ? new MediaRecorder(activeStream, {mimeType}) : new MediaRecorder(activeStream);
+      mrRef.current = mr;
+      chunksRef.current = [];
+      mr.ondataavailable = e => { if(e.data.size>0) chunksRef.current.push(e.data); };
+      mr.onstop = () => {
+        const blob = new Blob(chunksRef.current,{type: mimeType || 'audio/webm'});
+        setAudioUrl(URL.createObjectURL(blob));
+        const fr = new FileReader();
+        fr.readAsDataURL(blob);
+        fr.onloadend = () => {
+          const result = fr.result || '';
+          const commaIdx = result.indexOf(',');
+          if(commaIdx > 0) setAudioB64(result.slice(commaIdx+1));
+        };
+      };
+      mr.start();
+
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(SR){
+        try {
+          const rec = new SR();
+          rec.lang = 'ko-KR';
+          rec.continuous = true;
+          rec.interimResults = true;
+          let finalText = '';
+          rec.onresult = (e) => {
+            let interim = '';
+            for(let i=e.resultIndex; i<e.results.length; i++){
+              if(e.results[i].isFinal) finalText += e.results[i][0].transcript;
+              else interim += e.results[i][0].transcript;
+            }
+            setTranscript(finalText);
+            setInterimText(interim);
+          };
+          rec.onerror = (e) => { console.log('STT:', e.error); };
+          rec.start();
+          recRef.current = rec;
+        } catch(_){}
+      }
+
+      setMode('recording');
+      setRecDuration(0);
+      timerRef.current = setInterval(()=>setRecDuration(d=>d+1), 1000);
+    } catch(err) {
+      alert('마이크를 사용할 수 없어요. 키보드로 입력해주세요!');
+    }
+  };
+
+  const stopRec = () => {
+    sfx.click(soundOn);
+    if(mrRef.current && mrRef.current.state !== 'inactive') mrRef.current.stop();
+    if(recRef.current){ try{recRef.current.stop()}catch(_){} }
+    if(timerRef.current) clearInterval(timerRef.current);
+    setMode('done');
+    setInterimText('');
+  };
+
+  const reset = () => {
+    sfx.click(soundOn);
+    setMode('idle'); setTranscript(''); setTextInput('');
+    setAudioUrl(null); setAudioB64(null); setRecDuration(0);
+  };
+
+  const submit = () => {
+    sfx.star(soundOn);
+    const finalText = transcript || textInput;
+    if(!finalText.trim() && !audioB64){
+      alert('내용을 말하거나 적어주세요!'); return;
+    }
+    onComplete({ text: finalText.trim(), audioBase64: audioB64 });
+  };
+
+  useEffect(()=>{
+    return () => {
+      if(timerRef.current) clearInterval(timerRef.current);
+      if(recRef.current){ try{recRef.current.stop()}catch(_){} }
+    };
+  },[]);
+
+  return (
+    <div className={`card card-${color==='emerald'?'emerald':color} w-full max-w-2xl p-6`}>
+      <p className={`text-big font-black ${c.text} mb-2 text-center`}>{prompt}</p>
+      {example && <div className={`${c.light} border-2 ${c.border} rounded-2xl p-4 mb-5`}>
+        <p className="text-base font-bold text-slate-400 mb-1">📝 예시</p>
+        <p className="text-mid font-bold text-slate-700">"{example}"</p>
+      </div>}
+
+      {mode === 'idle' && (
+        <div className="space-y-4">
+          <button onClick={startRec}
+            className={`btn w-full py-5 ${c.bg} ${c.hover} text-white rounded-2xl font-black text-big shadow-lg flex items-center justify-center gap-3`}>
+            🎙️ 말하기로 시작!
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-slate-200"/>
+            <span className="text-base font-bold text-slate-400">또는</span>
+            <div className="flex-1 h-px bg-slate-200"/>
+          </div>
+          <textarea value={textInput} onChange={e=>setTextInput(e.target.value)}
+            placeholder="여기에 직접 적어도 좋아요!"
+            className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl text-mid font-bold focus:outline-none focus:border-pink-300 resize-none"
+            rows="3"/>
+          <button onClick={submit} disabled={!textInput.trim()}
+            className={`btn w-full py-4 ${textInput.trim() ? 'bg-slate-700 hover:bg-slate-800 text-white' : 'bg-slate-200 text-slate-400 btn-disabled'} rounded-2xl font-black text-big shadow-md`}>
+            ⌨️ 적은 내용 제출하기
+          </button>
+        </div>
+      )}
+
+      {mode === 'recording' && (
+        <div className="space-y-4">
+          <div className="relative bg-rose-50 border-2 border-rose-200 rounded-2xl p-5 min-h-[100px]">
+            <div className="absolute top-3 right-4 flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"/>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"/>
+              </span>
+              <span className="text-base font-black text-rose-500">{recDuration}초</span>
+            </div>
+            <p className="text-base font-black text-rose-400 mb-2">🎙️ 듣고 있어요...</p>
+            <p className="text-mid font-bold text-slate-700 leading-relaxed">
+              {transcript}
+              <span className="text-slate-400">{interimText}</span>
+              {!transcript && !interimText && <span className="text-slate-300 italic">말하는 내용이 여기에 표시돼요!</span>}
+            </p>
+          </div>
+          <button onClick={stopRec}
+            className="btn w-full py-5 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl font-black text-big shadow-lg">
+            ⏹ 다 말했어요!
+          </button>
+        </div>
+      )}
+
+      {mode === 'done' && (
+        <div className="space-y-4">
+          <div className={`${c.light} border-2 ${c.border} rounded-2xl p-4`}>
+            <p className="text-base font-black text-emerald-600 mb-2">✅ 들은 내용</p>
+            <textarea value={transcript || textInput} onChange={e=>setTranscript(e.target.value)}
+              placeholder="고치고 싶으면 직접 수정해도 돼요!"
+              className="w-full p-3 bg-white border border-slate-200 rounded-xl text-mid font-bold focus:outline-none focus:border-pink-300 resize-none"
+              rows="3"/>
+          </div>
+          {audioUrl && <audio controls src={audioUrl} className="w-full rounded-xl"/>}
+          <div className="flex gap-3">
+            <button onClick={reset}
+              className="btn flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black text-mid">
+              🔄 다시
+            </button>
+            <button onClick={submit}
+              className={`btn flex-[2] py-4 ${c.bg} ${c.hover} text-white rounded-2xl font-black text-big shadow-lg`}>
+              제출하기 🏆
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════
+   App 본체
+══════════════════════════════════════════════════════ */
+const App = () => {
+  const [phase, setPhase] = useState('mic_check');
+  const [students, setStudents] = useState(SAMPLES);
+  const [student, setStudent] = useState(SAMPLES[0]);
+  const [soundOn, setSoundOn] = useState(false);
+
+  const [emotionData, setEmotionData] = useState(EMOTION_DB);
+  const [quizData, setQuizData] = useState(QUIZ_Q);
+
+  const [startEmotion, setStartEmotion] = useState({text:'', audioBase64:null});
+  const [endResolution, setEndResolution] = useState({text:'', audioBase64:null});
+
+  const [conceptList, setConceptList] = useState([]);
+  const [conceptIdx, setConceptIdx] = useState(0);
+  const [highlightIdx, setHighlightIdx] = useState(-1);
+
+  const [qs, setQs] = useState([]);
+  const [qIdx, setQIdx] = useState(0);
+  const [fb, setFb] = useState(null);
+  const [wrong, setWrong] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [reviewMode, setReviewMode] = useState(false);
+  const [stickerTrigger, setStickerTrigger] = useState(0);
+
+  const [stars, setStars] = useState(0);
+  const [retryCount, setRetryCount] = useState(0);
+  const [selfSticker, setSelfSticker] = useState(null);
+
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  /* 데이터 로드 */
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const names = await gasGet('getStudentList');
+        if(Array.isArray(names) && names.length > 0){ setStudents(names); setStudent(names[0]); }
+      } catch(_) {}
+      try {
+        const emos = await gasGet('getEmotionData');
+        if(Array.isArray(emos) && emos.length > 0){
+          const mapped = emos.map(e => ({
+            id: e.word || e.id,
+            quad: (e.quad || 'yellow').toLowerCase(),
+            cat: (e.cat || 'pos').toLowerCase() === 'neg' ? 'neg' : 'pos',
+            emoji: e.emoji || '✨',
+            desc: e.desc || '',
+            sit: e.sit1 || e.sit || '',
+          }));
+          setEmotionData(mapped);
+        }
+      } catch(_) {}
+      try {
+        const qzs = await gasGet('getQuizData');
+        if(Array.isArray(qzs) && qzs.length > 0){
+          const mapped = qzs.map(q => ({...q, opts: q.opts || []}));
+          setQuizData(mapped);
+        }
+      } catch(_) {}
+    };
+    init();
+    if(window.speechSynthesis){
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => { cachedVoice = null; getKoVoice(); };
+    }
+  }, []);
+
+  /* 마이크 권한 */
+  const requestMic = async () => {
+    sfx.click(soundOn);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      window.__permStream = stream;
+      setPhase('start');
+    } catch(_) {
+      alert('마이크 권한이 필요해요! 키보드로도 입력 가능하니 계속 진행할게요.');
+      setPhase('start');
+    }
+  };
+
+  /* TTS 자동 읽기 */
+  useEffect(() => {
+    if(!soundOn) { setHighlightIdx(-1); return; }
+    let text = '';
+    if(phase === 'intro') text = '오늘의 약속! 나는 내 감정을 당당하게 말해요!';
+    else if(phase === 'mood_intro') text = '우리 마음에는 네 가지 색깔이 있어요. 빨강, 노랑, 파랑, 초록. 함께 알아볼까요?';
+    else if(phase === 'concept' && conceptList.length > 0){
+      const em = conceptList[conceptIdx];
+      if(em) text = `${em.sit}. 이럴 때 느끼는 감정은 ${em.id}예요. ${em.desc}`;
+    }
+    else if(phase === 'activity'){
+      const list = reviewMode ? wrong : qs;
+      const q = list[qIdx];
+      if(q) text = q.q;
+    }
+    else if(phase === 'self_rating') text = '오늘 공부 어땠나요? 별표를 눌러 알려줘요!';
+    else if(phase === 'start_voice') text = '오늘 나의 마음은 어떤가요? 무드미터에서 골라봐요!';
+    else if(phase === 'end_voice') text = '오늘 배운 것을 떠올리며 다짐을 말해보세요!';
+    else if(phase === 'self_praise') text = '내 다짐을 들어보고 스스로 칭찬해줘요!';
+
+    if(text){
+      setHighlightIdx(0);
+      speak(text, true,
+        (charIdx) => setHighlightIdx(charIdx),
+        () => setHighlightIdx(-1)
+      );
+    }
+  }, [phase, conceptIdx, qIdx, soundOn, reviewMode]);
+
+  /* 안전장치: 빈 데이터 다음 단계로 */
+  useEffect(() => {
+    if(phase === 'concept' && conceptList.length > 0 && conceptIdx >= conceptList.length){
+      setPhase('activity');
+    }
+  }, [phase, conceptList, conceptIdx]);
+
+  useEffect(() => {
+    if(phase === 'activity'){
+      const list = reviewMode ? wrong : qs;
+      if(list.length === 0) setPhase('self_rating');
+    }
+  }, [phase, reviewMode, wrong, qs]);
+
+  /* concept 단계 진입 시 conceptList 비어있으면 activity로 */
+  useEffect(() => {
+    if(phase === 'concept' && conceptList.length === 0){
+      setPhase('activity');
+    }
+  }, [phase, conceptList]);
+
+  /* 레벨 선택 */
+  const handleLevel = useCallback((count) => {
+    sfx.click(soundOn);
+    const shuffled = [...quizData].sort(()=>Math.random()-.5)
+      .slice(0, Math.min(count, quizData.length))
+      .map(q => ({...q, opts: [...q.opts].sort(()=>Math.random()-.5)}));
+    setQs(shuffled);
+
+    // 개념 학습용: 4사분면 골고루 4개 (가능하면)
+    const byQuad = {red:[],yellow:[],blue:[],green:[]};
+    emotionData.forEach(e => { if(byQuad[e.quad]) byQuad[e.quad].push(e); });
+    const concepts = [];
+    ['yellow','red','blue','green'].forEach(q => {
+      const list = byQuad[q].sort(()=>Math.random()-.5);
+      if(list[0]) concepts.push(list[0]);
+    });
+    // 부족하면 채우기
+    while(concepts.length < 4 && concepts.length < emotionData.length){
+      const fill = emotionData.find(e => !concepts.find(c => c.id === e.id));
+      if(fill) concepts.push(fill); else break;
+    }
+    setConceptList(concepts);
+
+    setQIdx(0); setFb(null); setWrong([]); setHistory([]);
+    setReviewMode(false);
+    setStars(0); setSaved(false); setSelfSticker(null);
+    setPhase('mood_intro');
+    setConceptIdx(0);
+  }, [quizData, emotionData, soundOn]);
+
+  /* 퀴즈 정답/오답 */
+  const checkAns = useCallback((ua) => {
+    const list = reviewMode ? wrong : qs;
+    const q = list[qIdx];
+    const ok = ua === q.a;
+    if(!reviewMode) setHistory(h => [...h, {id: q.id, q: q.q, a: q.a, ok, concept: q.a, picked: ua}]);
+    if(ok){
+      sfx.correct(soundOn);
+      setFb({ok:true, msg:q.fb, picked: ua});
+      setStickerTrigger(t=>t+1);
+      if(reviewMode) setWrong(w => w.filter(x => x.id !== q.id));
+      confetti({particleCount:80, spread:55, origin:{y:.65}});
+    } else {
+      sfx.wrong(soundOn);
+      setFb({ok:false, msg: q.wfb || `다시 한번 생각해봐요. 답은 "${q.a}" 같은 마음일 거예요!`, picked: ua});
+      if(!wrong.find(x=>x.id===q.id)) setWrong(w => [...w, q]);
+    }
+  }, [reviewMode, wrong, qs, qIdx, soundOn]);
+
+  const nextQ = useCallback(() => {
+    sfx.click(soundOn);
+    const list = reviewMode ? wrong : qs;
+    setFb(null);
+    if(qIdx < list.length-1) setQIdx(q => q+1);
+    else if(reviewMode || wrong.length === 0) setPhase('self_rating');
+    else setPhase('retry_intro');
+  }, [reviewMode, wrong, qs, qIdx, soundOn]);
+
+  const handleStartVoiceComplete = (data) => { setStartEmotion(data); setPhase('intro'); };
+  const handleEndVoiceComplete = (data) => { setEndResolution(data); setPhase('self_praise'); };
+
+  const handleStarSubmit = () => {
+    sfx.star(soundOn);
+    if(stars <= 3 && retryCount === 0) setPhase('low_star_retry');
+    else setPhase('end_voice');
+  };
+
+  const doRetry = () => {
+    sfx.click(soundOn);
+    setRetryCount(c=>c+1);
+    handleLevel(qs.length);
+  };
+
+  const saveResult = async () => {
+    if(saved){ setPhase('report'); return; }
+    setSaving(true); setSaved(true);
+    const learned = [...new Set(history.filter(h=>h.ok).map(h=>h.concept))];
+    const payload = {
+      name: student,
+      total: qs.length,
+      correct: history.filter(h=>h.ok).length,
+      emotions: learned,
+      rating: stars,
+      retryCount: retryCount,
+      startText: startEmotion.text,
+      startAudio: startEmotion.audioBase64,
+      endText: endResolution.text,
+      endAudio: endResolution.audioBase64,
+      selfSticker: selfSticker,
+    };
+    await gasPost(payload);
+    setSaving(false);
+    setPhase('report');
+  };
+
+  const toggleSound = () => {
+    setSoundOn(s => !s);
+    if(soundOn) window.speechSynthesis.cancel();
+  };
+
+  /* ══════ 렌더링 ══════ */
+
+  /* 마이크 권한 */
+  if(phase === 'mic_check') return (
+    <div className="w-full h-full flex flex-col items-center justify-center p-8 relative overflow-hidden">
+      <Mascot size={100}/>
+      <h1 className="text-mega font-black text-slate-900 mt-4 mb-3 tracking-tight text-center">
+        감정 알기 <span className="text-pink-500">대모험</span> ✨
+      </h1>
+      <div className="card card-pink p-8 max-w-md text-center mt-6">
+        <div className="text-7xl mb-4 float">🎙️</div>
+        <p className="text-big font-black text-slate-700 mb-3">마이크 준비하기</p>
+        <p className="text-mid font-bold text-slate-500 mb-6 word-keep">
+          내 마음을 목소리로 들려주려면<br/>마이크가 필요해요!
+        </p>
+        <button onClick={requestMic}
+          className="btn w-full py-5 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl font-black text-big shadow-lg">
+          🎙️ 마이크 허용하기
         </button>
       </div>
-    );
+    </div>
+  );
 
-    /* ── 마스코트 ─────────────────────────────────────────────────── */
-    const Mascot = ({ size = 90 }) => (
-      <svg width={size} height={size * 1.2} viewBox="0 0 100 120" fill="none">
-        <circle cx="50" cy="70" r="38" fill="white" stroke="#f472b6" strokeWidth="4.5" />
-        <path d="M34 20 L36 43" stroke="#f472b6" strokeWidth="9" strokeLinecap="round" />
-        <path d="M66 20 L64 43" stroke="#f472b6" strokeWidth="9" strokeLinecap="round" />
-        <circle cx="40" cy="68" r="3.5" fill="#1e293b" />
-        <circle cx="60" cy="68" r="3.5" fill="#1e293b" />
-        <path d="M43 85 Q50 92 57 85" stroke="#f472b6" strokeWidth="2.5" strokeLinecap="round" />
-      </svg>
-    );
+  /* 시작 화면 - 스피커 OFF 강조 */
+  if(phase === 'start') return (
+    <div className="w-full h-full flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <div className="absolute top-8 left-8 text-7xl opacity-10 float">🍭</div>
+      <div className="absolute bottom-16 right-8 text-8xl opacity-10 float" style={{animationDelay:'.8s'}}>🌈</div>
+      <Mascot size={110}/>
+      <h1 className="text-mega font-black text-slate-900 mt-4 mb-2 tracking-tight">
+        감정 알기 <span className="text-pink-500">대모험</span> ✨
+      </h1>
+      <p className="text-mid font-bold text-slate-400 mb-6">내 마음 속 반짝이는 보물을 찾아요!</p>
 
-    /* ══════════════════════════════════════════════════════════════
-       앱 본체
-    ══════════════════════════════════════════════════════════════ */
-    const App = () => {
-      const [phase, setPhase] = useState('loading');
-      const [students, setStudents] = useState([]);
-      const [student, setStudent] = useState('');
-      const [soundOn, setSoundOn] = useState(false);
-      const [micReady, setMicReady] = useState(false); // 마이크 사전 권한
+      <div className="card card-pink w-full max-w-md p-7 shadow-xl">
+        <p className="text-center text-base font-black text-pink-400 tracking-widest mb-3">내 이름을 선택해요</p>
+        <select value={student} onChange={e=>setStudent(e.target.value)}
+          className="w-full p-4 mb-5 bg-slate-50 border-2 border-slate-100 rounded-2xl text-big font-black text-slate-800 text-center focus:outline-none focus:border-pink-300">
+          {students.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <button onClick={()=>{sfx.click(soundOn); setPhase('start_voice')}}
+          className="btn w-full py-5 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl font-black text-big shadow-lg">
+          시작하기 ▶
+        </button>
 
-      // 개념 학습
-      const [conceptList, setConceptList] = useState([]);
-      const [conceptIdx, setConceptIdx] = useState(0);
-
-      // 퀴즈
-      const [qs, setQs] = useState([]);
-      const [qIdx, setQIdx] = useState(0);
-      const [fb, setFb] = useState(null);
-      const [wrong, setWrong] = useState([]);
-      const [history, setHistory] = useState([]);
-      const [reviewMode, setReviewMode] = useState(false);
-
-      // 감정 톺아보기
-      const [wheels, setWheels] = useState([]);
-      const [wheelIdx, setWheelIdx] = useState(0);
-      const [wSel, setWSel] = useState(null);
-      const [wFb, setWFb] = useState(null);
-
-      // 별점 & 녹음
-      const [stars, setStars] = useState(0);
-      const [recStep, setRecStep] = useState('idle');
-      const [audioUrl, setAudioUrl] = useState(null);
-      const [audioB64, setAudioB64] = useState(null);
-      const [saving, setSaving] = useState(false);
-      const [saved, setSaved] = useState(false); // 중복 저장 방지
-
-      const mrRef = useRef(null);
-      const chunksRef = useRef([]);
-      const permStreamRef = useRef(null); // 마이크 사전 허용 스트림 보관
-
-      /* ── 초기 로드 ─────────────────────────────────────────────── */
-      useEffect(() => {
-        const init = async () => {
-          let names = SAMPLES;
-          if (window.google?.script?.run) {
-            names = await new Promise(res =>
-              window.google.script.run
-                .withSuccessHandler(l => res(l && l.length > 0 ? l : SAMPLES))
-                .withFailureHandler(() => res(SAMPLES))
-                .getStudentList()
-            );
-          } else if (GAS_URL) {
-            try {
-              const data = await gasGet('getStudentList');
-              if (Array.isArray(data) && data.length > 0) names = data;
-            } catch (_) { }
-          }
-          setStudents(names); setStudent(names[0]);
-          setPhase('start');
-        };
-        init();
-      }, []);
-
-      /* ── TTS 자동 읽기 (🔊 켤 때 화면마다 자동 읽어줌) ──────────── */
-      useEffect(() => {
-        if (!soundOn) return;
-        if (phase === 'intro') {
-          speak('오늘의 약속. 나는 내 감정을 당당하게 말해요!', true);
-        } else if (phase === 'concept' && conceptList.length > 0) {
-          const em = conceptList[conceptIdx];
-          if (em) speak(`${em.sit}. 이럴 때 느끼는 감정은 바로 ${em.id}. ${em.desc}`, true);
-        } else if (phase === 'activity') {
-          const list = reviewMode ? wrong : qs;
-          const q = list[qIdx];
-          if (q) speak(q.q, true);
-        } else if (phase === 'wheel' && wheels.length > 0) {
-          const wq = wheels[wheelIdx];
-          if (wq) speak(`어울리는 마음을 찾아주세요. ${wq.sit}`, true);
-        } else if (phase === 'self_rating') {
-          speak('오늘 공부 어땠나요? 별표를 눌러 알려줘요!', true);
-        } else if (phase === 'recording') {
-          speak('나는 어떨 때 즐거운가요? 아래 버튼을 눌러 말해보세요!', true);
-        } else if (phase === 'report') {
-          speak('모험 대장증이 발급됐어요! 정말 잘했어요!', true);
-        }
-      }, [phase, conceptIdx, qIdx, wheelIdx, soundOn]);
-
-      /* ── 마이크 사전 권한 요청 ─────────────────────────────────── */
-      const requestMic = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          permStreamRef.current = stream; // 스트림 살려두어 재요청 팝업 방지
-          setMicReady(true);
-        } catch (_) {
-          alert('마이크 권한이 없습니다. 브라우저 설정에서 허용해 주세요.');
-        }
-      };
-
-      /* ── 레벨 선택 ────────────────────────────────────────────── */
-      const handleLevel = useCallback((count) => {
-        const shuffled = [...QUIZ_Q].sort(() => Math.random() - .5)
-          .slice(0, Math.min(count, QUIZ_Q.length))
-          .map(q => ({ ...q, opts: [...q.opts].sort(() => Math.random() - .5) }));
-        setQs(shuffled);
-
-        const must = EMOTION_DB.find(e => e.id === '뭉클하다');
-        const rest = EMOTION_DB.filter(e => e.id !== '뭉클하다').sort(() => Math.random() - .5).slice(0, 2);
-        setConceptList([must, ...rest].sort(() => Math.random() - .5));
-
-        const wqs = [...EMOTION_DB].sort(() => Math.random() - .5).slice(0, 3).map(e => {
-          const opp = e.cat === 'pos' ? 'neg' : 'pos';
-          const dis = EMOTION_DB.filter(x => x.cat === opp).sort(() => Math.random() - .5).slice(0, 2).map(x => x.id);
-          return { sit: e.sit, correct: e.id, choices: [e.id, ...dis].sort(() => Math.random() - .5) };
-        });
-        setWheels(wqs);
-
-        setQIdx(0); setFb(null); setWrong([]); setHistory([]);
-        setReviewMode(false); setWheelIdx(0); setWSel(null); setWFb(null);
-        setStars(0); setRecStep('idle'); setAudioUrl(null); setAudioB64(null); setSaved(false);
-        setPhase('concept'); setConceptIdx(0);
-      }, []);
-
-      /* ── 퀴즈 ─────────────────────────────────────────────────── */
-      const checkAns = useCallback((ua) => {
-        const list = reviewMode ? wrong : qs;
-        const q = list[qIdx];
-        const ok = ua === q.a;
-        if (!reviewMode) setHistory(h => [...h, { id: q.id, ok, concept: q.a }]);
-        if (ok) {
-          setFb({ ok: true, msg: q.fb });
-          if (reviewMode) setWrong(w => w.filter(x => x.id !== q.id));
-          confetti({ particleCount: 80, spread: 55, origin: { y: .65 } });
-        } else {
-          setFb({ ok: false });
-          if (!wrong.find(x => x.id === q.id)) setWrong(w => [...w, q]);
-        }
-      }, [reviewMode, wrong, qs, qIdx]);
-
-      const nextQ = useCallback(() => {
-        const list = reviewMode ? wrong : qs;
-        setFb(null);
-        if (qIdx < list.length - 1) setQIdx(q => q + 1);
-        else if (reviewMode || wrong.length === 0) setPhase('wheel');
-        else setPhase('재도전안내');
-      }, [reviewMode, wrong, qs, qIdx]);
-
-      /* ── 녹음 ─────────────────────────────────────────────────── */
-      const startRec = async () => {
-        try {
-          // 미리 허용된 스트림 재사용 → 브라우저 팝업 재출현 방지
-          let stream = permStreamRef.current;
-          if (!stream || stream.getAudioTracks().every(t => t.readyState === 'ended')) {
-            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            permStreamRef.current = stream;
-          }
-          const mr = new MediaRecorder(stream);
-          mrRef.current = mr; chunksRef.current = [];
-          mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-          mr.onstop = () => {
-            const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-            setAudioUrl(URL.createObjectURL(blob));
-            const fr = new FileReader();
-            fr.readAsDataURL(blob);
-            fr.onloadend = () => { setAudioB64(fr.result.split(',')[1]); setRecStep('done'); };
-          };
-          mr.start(); setRecStep('rec');
-        } catch (_) { alert('마이크를 사용할 수 없어요!'); }
-      };
-
-      const stopRec = () => {
-        if (mrRef.current && mrRef.current.state !== 'inactive') mrRef.current.stop();
-      };
-
-      /* ── 결과 저장 (1회만) ────────────────────────────────────── */
-      const saveResult = async () => {
-        if (saved) { setPhase('report'); return; }
-        setSaving(true); setSaved(true);
-        const learned = [...new Set(history.filter(h => h.ok).map(h => h.concept))];
-        const payload = {
-          name: student, total: qs.length, correct: history.filter(h => h.ok).length,
-          emotions: learned, rating: stars, audioBase64: audioB64
-        };
-        if (window.google?.script?.run) {
-          window.google.script.run.saveRecord(payload);
-        } else if (GAS_URL) {
-          await gasPost(payload);
-        }
-        setSaving(false); setPhase('report');
-      };
-
-      const toggleSound = () => setSoundOn(s => !s);
-
-      /* ══════════════════════════════════════════════════════════════
-         화면 렌더링
-      ══════════════════════════════════════════════════════════════ */
-
-      /* 로딩 */
-      if (phase === 'loading') return (
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="w-14 h-14 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin" />
+        {/* 스피커 안내 - 기본 OFF 명시 */}
+        <div className="mt-4 bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 flex items-center justify-between">
+          <div>
+            <p className="text-base font-black text-slate-600">🔊 소리 듣기</p>
+            <p className="text-sm font-bold text-slate-400">{soundOn?'문제를 읽어줘요':'한글을 잘 못 읽으면 켜요'}</p>
+          </div>
+          <button onClick={toggleSound}
+            className={`btn px-4 py-2 rounded-full font-black text-base border-2 ${soundOn?'bg-pink-100 text-pink-600 border-pink-300':'bg-white text-slate-500 border-slate-300'}`}>
+            {soundOn?'🔊 켜짐':'🔇 꺼짐'}
+          </button>
         </div>
-      );
+      </div>
+    </div>
+  );
 
-      /* ── 시작 화면 ─────────────────────────────────────────────── */
-      if (phase === 'start') return (
-        <div className="w-full h-full flex flex-col items-center justify-center p-8 relative overflow-hidden"
-          style={{ background: 'linear-gradient(145deg,#fff9fb 0%,#f0f4ff 100%)' }}>
-          <div className="absolute top-8 left-8 text-7xl opacity-10 float">🍭</div>
-          <div className="absolute bottom-16 right-8 text-8xl opacity-10 float" style={{ animationDelay: '.8s' }}>🌈</div>
-          <Mascot size={110} />
-          <h1 className="text-5xl font-black text-slate-900 mt-5 mb-2 tracking-tight">
-            감정 알기 <span className="text-pink-500">대모험</span> ✨
-          </h1>
-          <p className="text-lg font-bold text-slate-400 mb-10">내 마음 속 반짝이는 보물을 찾아요!</p>
+  /* 시작 감정 녹음 */
+  if(phase === 'start_voice') return (
+    <div className="w-full h-full flex flex-col" style={{background:'#fffaf5'}}>
+      <Header label="🌅 오늘 나의 마음은?" soundOn={soundOn} toggleSound={toggleSound}/>
+      <div className="flex-1 flex flex-col items-center justify-center px-6 scroll-y">
+        <div className="text-6xl mb-3 float">🌟</div>
+        <h2 className="text-big font-black text-slate-800 mb-4 text-center">
+          {soundOn ? <HighlightedText text="오늘 나의 마음은 어떤가요?" highlightIdx={highlightIdx}/> : '오늘 나의 마음은 어떤가요?'}
+        </h2>
+        <VoiceRecorder
+          prompt="🎙️ 지금 내 마음을 말해보세요!"
+          example="오늘은 친구를 만나서 반가워요!"
+          onComplete={handleStartVoiceComplete}
+          soundOn={soundOn}
+          color="pink"
+        />
+        <button onClick={()=>{sfx.click(soundOn); setStartEmotion({text:'',audioBase64:null}); setPhase('intro')}}
+          className="mt-3 text-slate-300 hover:text-slate-500 underline font-bold text-base">
+          말하기가 쑥스러우면 넘어가도 돼요
+        </button>
+      </div>
+    </div>
+  );
 
-          <div className="card card-pink w-full max-w-sm p-8 shadow-xl">
-            <p className="text-center text-sm font-black text-pink-400 tracking-widest mb-4">내 이름을 선택해요</p>
-            <select value={student} onChange={e => setStudent(e.target.value)}
-              className="w-full p-4 mb-5 bg-slate-50 border-2 border-slate-100 rounded-2xl text-2xl font-black text-slate-800 text-center focus:outline-none focus:border-pink-300">
-              {students.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
+  /* 인트로 */
+  if(phase === 'intro') return (
+    <div className="w-full h-full flex flex-col" style={{background:'#fff9fa'}}>
+      <Header label="🌸 오늘의 약속" soundOn={soundOn} toggleSound={toggleSound}/>
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
+        <div className="inline-block bg-pink-100 text-pink-600 font-black text-base px-4 py-2 rounded-full mb-5">🌱 우리의 약속</div>
+        <h2 className="text-mega font-black text-slate-800 mb-6 leading-snug">
+          {soundOn ? <HighlightedText text='"나는 내 감정을 당당하게 말해요!"' highlightIdx={highlightIdx}/> : '"나는 내 감정을 당당하게 말해요!"'}
+        </h2>
+        <div className="card card-pink p-7 max-w-lg mb-8 text-mid font-bold text-slate-500 leading-relaxed word-keep italic">
+          기쁠 때는 웃고, 슬플 때는 말하고,<br/>어려울 때는 도움을 청하는<br/>용기 있는 어린이가 될래요!
+        </div>
+        <button onClick={()=>{sfx.click(soundOn); setPhase('level_select')}}
+          className="btn w-full max-w-xs py-5 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl font-black text-big shadow-lg">
+          도전하기 ➡️
+        </button>
+      </div>
+    </div>
+  );
 
-            {/* 🎙️ 마이크 사전 권한 요청 버튼 */}
-            {!micReady ? (
-              <button onClick={requestMic}
-                className="btn w-full py-4 mb-4 bg-rose-50 text-rose-600 border-2 border-rose-200 rounded-2xl font-black text-xl">
-                🎙️ 마이크 준비하기 (녹음용)
-              </button>
+  /* 레벨 선택 */
+  if(phase === 'level_select') return (
+    <div className="w-full h-full flex flex-col bg-white">
+      <Header label="📚 몇 문제 도전?" soundOn={soundOn} toggleSound={toggleSound}/>
+      <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+        <h2 className="text-mega font-black text-slate-800 mb-3">몇 문제에 도전해볼까요?</h2>
+        <p className="text-mid font-bold text-slate-400 mb-7 italic">마음에 드는 만큼 고를 수 있어요!</p>
+        <div className="flex flex-col gap-4 w-full max-w-sm">
+          {[5,10,15].map((n,i)=>(
+            <button key={n} onClick={()=>handleLevel(n)}
+              className="btn py-6 bg-white border-4 border-pink-100 hover:border-pink-400 rounded-3xl text-mega font-black text-pink-500 shadow-md flex items-center justify-between px-8">
+              <span>{n} 문제 도전</span>
+              <span className="text-5xl">{['🌱','🌿','🌳'][i]}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  /* 무드미터 인트로 - 4사분면 소개 */
+  if(phase === 'mood_intro') return (
+    <div className="w-full h-full flex flex-col" style={{background:'#fafbff'}}>
+      <Header label="🎨 마음의 네 가지 색깔" soundOn={soundOn} toggleSound={toggleSound}/>
+      <div className="flex-1 flex flex-col items-center justify-center px-6 scroll-y">
+        <h2 className="text-big font-black text-slate-800 mb-3 text-center">
+          {soundOn ? <HighlightedText text="우리 마음에는 네 가지 색깔이 있어요!" highlightIdx={highlightIdx}/> : '우리 마음에는 네 가지 색깔이 있어요!'}
+        </h2>
+        <p className="text-mid font-bold text-slate-500 mb-5 italic text-center word-keep">
+          상황에 따라 마음 색깔이 달라져요. 함께 알아볼까요?
+        </p>
+        <div className="w-full px-4 mb-5">
+          <MoodMeter activeQuad={null} emotion={null} size="normal"/>
+        </div>
+        <button onClick={()=>{sfx.click(soundOn); setPhase('concept')}}
+          className="btn w-full max-w-xs py-5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl font-black text-big shadow-lg">
+          감정 배우러 가기 ▶
+        </button>
+      </div>
+    </div>
+  );
+
+  /* 개념 학습 - 무드미터 + 상황 → 감정 연결 */
+  if(phase === 'concept'){
+    const em = conceptList[conceptIdx];
+    if(!em){
+      return <div className="w-full h-full flex items-center justify-center"><div className="w-12 h-12 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin"/></div>;
+    }
+    const quadInfo = QUADRANTS[em.quad] || QUADRANTS.yellow;
+    return (
+      <div className="w-full h-full flex flex-col" style={{background:'#f8fbff'}}>
+        <Header label={`💡 감정 배우기 ${conceptIdx+1}/${conceptList.length}`} soundOn={soundOn} toggleSound={toggleSound}/>
+        <div className="flex-1 flex flex-col px-4 py-2 scroll-y">
+          {/* 무드미터 (작게) */}
+          <div className="mb-3">
+            <MoodMeter activeQuad={em.quad} emotion={em} size="normal"/>
+          </div>
+
+          {/* 개념 카드 */}
+          <div className="card card-indigo w-full max-w-2xl mx-auto p-5 flex flex-col items-center text-center">
+            <div className="bg-indigo-50 border-2 border-indigo-100 rounded-2xl p-4 mb-3 w-full">
+              <p className="text-base font-black text-slate-400 mb-1">📍 이런 상황이 있어요</p>
+              <p className="text-mid font-bold text-slate-700 italic">"{em.sit}"</p>
+            </div>
+            <div className="text-base font-black text-slate-400 mb-2">⬇️ 그럴 땐 이런 마음이에요</div>
+            <div className="flex items-center gap-3">
+              <span className="text-6xl">{em.emoji}</span>
+              <h3 className="text-mega font-black" style={{color: quadInfo.color}}>"{em.id}"</h3>
+            </div>
+            <p className="text-mid font-bold text-slate-600 word-keep max-w-md mt-2">{em.desc}</p>
+          </div>
+          <button onClick={()=>{sfx.click(soundOn); if(conceptIdx < conceptList.length-1) setConceptIdx(c=>c+1); else { setQIdx(0); setPhase('activity'); }}}
+            className="btn mt-4 w-full max-w-2xl mx-auto py-4 rounded-2xl font-black text-big shadow-lg text-white"
+            style={{backgroundColor:'#4338ca'}}>
+            {conceptIdx < conceptList.length-1 ? '다음 감정 배우기 ➡️' : '퀴즈 시작! 🎯'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  /* 퀴즈 - 정답/오답 차별화 + 무드미터 표시 */
+  if(phase === 'activity'){
+    const list = reviewMode ? wrong : qs;
+    const q = list[qIdx];
+    if(!q){
+      return <div className="w-full h-full flex items-center justify-center"><div className="w-12 h-12 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin"/></div>;
+    }
+    // 정답 감정의 무드미터 사분면
+    const ansEmotion = emotionData.find(e => e.id === q.a);
+    return (
+      <div className="w-full h-full flex flex-col bg-white relative">
+        <StickerBurst trigger={stickerTrigger}/>
+        <Header label={reviewMode ? '🔄 다시 풀기' : `🧩 감정 퀴즈 ${qIdx+1}/${list.length}`} soundOn={soundOn} toggleSound={toggleSound}/>
+        <div className="flex-1 flex flex-col items-center justify-center px-6 scroll-y">
+          <div className={`card card-pink w-full max-w-2xl p-7 text-center ${fb?.ok===false?'shake':''}`}>
+            {!fb ? (
+              <>
+                <div className="text-[80px] mb-3 float">{q.img}</div>
+                <h2 className="text-big font-black text-slate-800 mb-6 word-keep">
+                  {soundOn ? <HighlightedText text={`"${q.q}"`} highlightIdx={highlightIdx}/> : `"${q.q}"`}
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {q.opts.map((o,i)=>(
+                    <button key={i} onClick={()=>checkAns(o)}
+                      className="btn py-7 bg-slate-50 border-2 border-slate-200 hover:border-pink-400 hover:bg-pink-50 rounded-3xl text-big font-black text-slate-700 shadow-sm">
+                      {o}
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : fb.ok ? (
+              <>
+                <div className="text-[80px] mb-2 bounce-in">🌟</div>
+                <h2 className="text-mega font-black mb-3 text-emerald-500">정답이에요!</h2>
+                <div className="bg-emerald-50 border-2 border-emerald-100 rounded-2xl p-5 mb-3 text-mid font-bold text-slate-700 italic word-keep">
+                  {fb.msg}
+                </div>
+                {/* 무드미터에 정답 위치 표시 */}
+                {ansEmotion && (
+                  <div className="my-3">
+                    <MoodMeter activeQuad={ansEmotion.quad} emotion={ansEmotion} size="normal"/>
+                  </div>
+                )}
+                <button onClick={nextQ}
+                  className="btn w-full py-5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-big shadow-lg">
+                  다음 문제로 ▶
+                </button>
+              </>
             ) : (
-              <p className="text-center text-emerald-600 font-black text-lg mb-4">✅ 마이크 준비 완료!</p>
+              <>
+                <div className="text-[80px] mb-2 bounce-in">🤔</div>
+                <h2 className="text-mega font-black mb-3 text-amber-500">앗, 다시 생각해봐요!</h2>
+                <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 mb-3 text-mid font-bold text-slate-700 italic word-keep">
+                  {fb.msg}
+                </div>
+                {/* 바로 다시 풀 수 있게 */}
+                <p className="text-base font-black text-slate-500 mb-3">⬇️ 다시 골라봐요!</p>
+                <div className="grid grid-cols-2 gap-4">
+                  {q.opts.map((o,i)=>(
+                    <button key={i} onClick={()=>{ setFb(null); setTimeout(()=>checkAns(o), 50); }}
+                      className={`btn py-6 rounded-3xl text-big font-black shadow-sm border-2 ${
+                        o === fb.picked
+                          ? 'bg-slate-100 text-slate-400 border-slate-200'
+                          : 'bg-pink-50 text-pink-600 border-pink-300 hover:bg-pink-100'
+                      }`}>
+                      {o}
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-            <button onClick={() => { speak(`안녕하세요 ${student}!`, soundOn); setPhase('intro'); }}
-              className="btn w-full py-5 bg-pink-500 text-white rounded-2xl font-black text-3xl shadow-lg hover:bg-pink-600">
-              시작하기 ▶
+  /* 재도전 안내 */
+  if(phase === 'retry_intro') return (
+    <div className="w-full h-full flex flex-col">
+      <Header label="💡 한번 더!" soundOn={soundOn} toggleSound={toggleSound}/>
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
+        <div className="text-[110px] mb-5 float">💡</div>
+        <h2 className="text-mega font-black text-slate-800 mb-3">포기하지 않는 마음이<br/>제일 멋져요!</h2>
+        <p className="text-mid font-bold text-slate-400 mb-8">아쉬운 문제들을 다시 풀어볼까요?</p>
+        <button onClick={()=>{sfx.click(soundOn); setReviewMode(true); setQIdx(0); setFb(null); setPhase('activity')}}
+          className="btn py-5 px-12 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-big shadow-lg">
+          🔄 다시 도전!
+        </button>
+      </div>
+    </div>
+  );
+
+  /* 자기 평가 (별점) */
+  if(phase === 'self_rating') return (
+    <div className="w-full h-full flex flex-col bg-white">
+      <Header label="⭐ 나의 별점" soundOn={soundOn} toggleSound={toggleSound}/>
+      <div className="flex-1 flex flex-col items-center justify-center px-8 text-center scroll-y">
+        <h2 className="text-mega font-black text-slate-800 mb-3">오늘 공부 어땠나요?</h2>
+        <p className="text-mid font-bold text-slate-400 mb-8 italic">별표를 눌러 알려주세요!</p>
+        <div className="flex gap-3 mb-10 justify-center">
+          {[1,2,3,4,5].map(s=>(
+            <button key={s} onClick={()=>{sfx.star(soundOn); setStars(s)}}
+              className={`text-7xl btn ${stars>=s?'scale-125 drop-shadow-lg':'opacity-25 grayscale'}`}>
+              ⭐
             </button>
-          </div>
+          ))}
         </div>
-      );
+        {stars > 0 && (
+          <button onClick={handleStarSubmit}
+            className="btn w-full max-w-xs py-5 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl font-black text-big shadow-lg">
+            다음으로 ➡️
+          </button>
+        )}
+      </div>
+    </div>
+  );
 
-      /* ── 인트로 ────────────────────────────────────────────────── */
-      if (phase === 'intro') return (
-        <div className="w-full h-full flex flex-col" style={{ background: '#fff9fa' }}>
-          <Header label="🌸 시작" soundOn={soundOn} toggleSound={toggleSound} />
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-10">
-            <div className="inline-block bg-pink-100 text-pink-600 font-black text-base px-4 py-2 rounded-full mb-6">🌱 오늘의 약속</div>
-            <h2 className="text-4xl font-black text-slate-800 mb-8 leading-snug">
-              "나는 내 감정을<br />당당하게 말해요!"
-            </h2>
-            <div className="card card-pink p-8 max-w-lg mb-10 text-xl font-bold text-slate-500 leading-relaxed word-keep italic">
-              기쁠 때는 웃고, 슬플 때는 말하고,<br />어려울 때는 도움을 청하는 용기 있는 어린이가 될래요!
+  /* 별 3개 이하 → 다시 활동 */
+  if(phase === 'low_star_retry') return (
+    <div className="w-full h-full flex flex-col" style={{background:'#fff7ed'}}>
+      <Header label="💪 한번 더 도전!" soundOn={soundOn} toggleSound={toggleSound}/>
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
+        <div className="text-[110px] mb-5 float">💪</div>
+        <h2 className="text-mega font-black text-slate-800 mb-3">아직 더 알 수 있어요!</h2>
+        <p className="text-mid font-bold text-slate-500 mb-8 word-keep">
+          오늘은 별 {stars}개를 줬네요.<br/>
+          한번 더 도전해서 더 잘 알아볼까요?
+        </p>
+        <div className="flex flex-col gap-4 w-full max-w-sm">
+          <button onClick={doRetry}
+            className="btn w-full py-5 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-big shadow-lg">
+            🔄 다시 활동하기!
+          </button>
+          <button onClick={()=>{sfx.click(soundOn); setPhase('end_voice')}}
+            className="btn w-full py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black text-mid">
+            이대로 끝내기
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* 마지막 다짐 녹음 */
+  if(phase === 'end_voice') return (
+    <div className="w-full h-full flex flex-col" style={{background:'#f0fdf4'}}>
+      <Header label="🌟 나의 다짐" soundOn={soundOn} toggleSound={toggleSound}/>
+      <div className="flex-1 flex flex-col items-center justify-center px-6 scroll-y">
+        <div className="text-6xl mb-3 float">🌈</div>
+        <h2 className="text-big font-black text-slate-800 mb-4 text-center word-keep">
+          {soundOn ? <HighlightedText text="오늘 배운 것을 떠올리며 다짐을 말해보세요!" highlightIdx={highlightIdx}/> : '오늘 배운 것을 떠올리며 다짐을 말해보세요!'}
+        </h2>
+        <VoiceRecorder
+          prompt="🎙️ 내일은 어떻게 내 감정을 표현할까요?"
+          example="속상할 때 친구에게 솔직하게 말해볼래요!"
+          onComplete={handleEndVoiceComplete}
+          soundOn={soundOn}
+          color="emerald"
+        />
+        <button onClick={()=>{sfx.click(soundOn); setEndResolution({text:'',audioBase64:null}); setPhase('self_praise')}}
+          className="mt-3 text-slate-300 hover:text-slate-500 underline font-bold text-base">
+          넘어가기
+        </button>
+      </div>
+    </div>
+  );
+
+  /* 자기 칭찬 스티커 */
+  if(phase === 'self_praise'){
+    const stickerOptions = [
+      {emoji:'🌟', label:'반짝반짝 잘했어요!'},
+      {emoji:'💖', label:'마음을 잘 표현했어요!'},
+      {emoji:'🏆', label:'최고로 멋져요!'},
+      {emoji:'🌈', label:'무지개처럼 빛나요!'},
+      {emoji:'👑', label:'감정 왕이에요!'},
+      {emoji:'🦄', label:'특별한 어린이!'},
+    ];
+    return (
+      <div className="w-full h-full flex flex-col" style={{background:'#fef3f2'}}>
+        <Header label="✨ 스스로 칭찬하기" soundOn={soundOn} toggleSound={toggleSound}/>
+        <div className="flex-1 flex flex-col items-center justify-center px-6 scroll-y">
+          <h2 className="text-big font-black text-slate-800 mb-2 text-center">
+            {soundOn ? <HighlightedText text="내 다짐을 듣고 스스로 칭찬해줘요!" highlightIdx={highlightIdx}/> : '내 다짐을 듣고 스스로 칭찬해줘요!'}
+          </h2>
+          <p className="text-mid font-bold text-slate-400 mb-4 italic">노력한 나를 칭찬해주세요!</p>
+
+          {endResolution.audioBase64 && (
+            <div className="card card-pink p-4 mb-4 w-full max-w-md">
+              <p className="text-base font-black text-pink-500 mb-2">🎙️ 내 다짐 듣기</p>
+              <audio controls src={`data:audio/webm;base64,${endResolution.audioBase64}`} className="w-full"/>
+              {endResolution.text && <p className="mt-2 text-mid font-bold text-slate-700 italic">"{endResolution.text}"</p>}
             </div>
-            <button onClick={() => setPhase('level_select')}
-              className="btn w-full max-w-xs py-5 bg-pink-500 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-pink-600">
-              도전하기 ➡️
+          )}
+
+          <div className="grid grid-cols-3 gap-3 w-full max-w-2xl mb-5">
+            {stickerOptions.map((s,i)=>(
+              <button key={i} onClick={()=>{sfx.star(soundOn); setSelfSticker(s.label)}}
+                className={`btn p-4 rounded-3xl border-4 flex flex-col items-center gap-2
+                  ${selfSticker===s.label?'border-pink-500 bg-pink-50 scale-105':'border-slate-100 bg-white hover:border-pink-300'}`}>
+                <span className="text-5xl">{s.emoji}</span>
+                <span className="text-base font-black text-slate-700 word-keep text-center">{s.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {selfSticker && (
+            <button onClick={()=>{sfx.win(soundOn); confetti({particleCount:150,spread:90,origin:{y:.6}}); saveResult();}}
+              className="btn w-full max-w-xs py-5 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl font-black text-big shadow-lg">
+              상장 받으러 가기 🏆
             </button>
-          </div>
+          )}
         </div>
-      );
+      </div>
+    );
+  }
 
-      /* ── 레벨 선택 ─────────────────────────────────────────────── */
-      if (phase === 'level_select') return (
-        <div className="w-full h-full flex flex-col bg-white">
-          <Header label="📚 문제 수 선택" soundOn={soundOn} toggleSound={toggleSound} />
-          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-            <h2 className="text-3xl font-black text-slate-800 mb-10">몇 조각의 보물을 찾을까요?</h2>
-            <div className="flex flex-col gap-5 w-full max-w-xs">
-              {[5, 10, 15].map((n, i) => (
-                <button key={n} onClick={() => handleLevel(n)}
-                  className="btn py-6 bg-white border-4 border-pink-100 hover:border-pink-400 rounded-3xl text-3xl font-black text-pink-500 shadow-md flex items-center justify-between px-8">
-                  <span>{n} 조각 찾기</span>
-                  <span>{['🌱', '🌿', '🌳'][i]}</span>
-                </button>
-              ))}
-            </div>
+  /* 최종 결과 + 배움기록표 미리보기 */
+  if(phase === 'report'){
+    const learned = [...new Set(history.filter(h=>h.ok).map(h=>h.concept))];
+    const correctCnt = history.filter(h=>h.ok).length;
+    const accuracy = history.length > 0 ? Math.round(correctCnt/history.length*100) : 0;
+
+    return (
+      <div className="w-full h-full flex flex-col px-5 py-3 bg-white relative scroll-y">
+        {saving && (
+          <div className="absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-50 rounded-[2rem]">
+            <div className="w-14 h-14 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin mb-4"/>
+            <p className="text-big font-black text-slate-700">기록을 저장하는 중이에요...</p>
           </div>
+        )}
+
+        <div className="text-center mb-2">
+          <div className="text-5xl mb-1 float">🏆</div>
+          <h1 className="text-mega font-black text-slate-900">감정 알기 대장 상장</h1>
+          <p className="text-base font-bold text-slate-400">+ 오늘의 배움 기록표</p>
         </div>
-      );
 
-      /* ── 개념 학습 ─────────────────────────────────────────────── */
-      if (phase === 'concept') {
-        const em = conceptList[conceptIdx] || EMOTION_DB[0];
-        return (
-          <div className="w-full h-full flex flex-col" style={{ background: '#f8fbff' }}>
-            <Header label={`💡 감정 배우기 ${conceptIdx + 1}/3`} soundOn={soundOn} toggleSound={toggleSound} />
-            <div className="flex-1 flex flex-col items-center justify-center px-6 py-2">
-              <div className="card card-indigo w-full max-w-2xl p-8 flex flex-col items-center text-center">
-                {/* 태그: 한자 제거, 카테고리 크게 */}
-                <div className="flex gap-2 mb-5">
-                  <span className={`text-2xl font-black px-6 py-3 rounded-2xl ${em.cat === 'pos' ? 'bg-amber-100 text-amber-700' : 'bg-indigo-100 text-indigo-700'}`}>
-                    {em.cat === 'pos' ? '☀️ 긍정적인 마음' : '☁️ 힘든 마음'}
-                  </span>
-                </div>
-                {/* 상황 */}
-                <div className="bg-indigo-50 border-2 border-indigo-100 rounded-2xl p-5 mb-6 w-full">
-                  <p className="text-2xl font-bold text-slate-700 italic">"{em.sit}"</p>
-                </div>
-                {/* 이모지 + 단어 */}
-                <div className="text-[90px] mb-3 float">{em.emoji}</div>
-                <h3 className="text-5xl font-black text-indigo-600 mb-3">"{em.id}"</h3>
-                <p className="text-xl font-bold text-slate-400 word-keep max-w-sm">{em.desc}</p>
-              </div>
-              {/* 가시성 보장: 진한 인디고 + 흰 글자 */}
-              <button onClick={() => { if (conceptIdx < 2) setConceptIdx(c => c + 1); else { setQIdx(0); setPhase('activity'); } }}
-                className="btn mt-6 w-full max-w-2xl py-6 rounded-2xl font-black text-2xl shadow-lg text-white"
-                style={{ backgroundColor: '#4338ca' }}>
-                {conceptIdx < 2 ? '다음 설명 보기 ➡️' : '퀴즈 시작하기! 🎯'}
-              </button>
-            </div>
-          </div>
-        );
-      }
-
-      /* ── 퀴즈 ──────────────────────────────────────────────────── */
-      if (phase === 'activity') {
-        const list = reviewMode ? wrong : qs;
-        const q = list[qIdx];
-        if (!q) { setPhase('wheel'); return null; }
-
-        return (
-          <div className="w-full h-full flex flex-col bg-white">
-            <Header label={reviewMode ? '🔄 다시 풀기' : '🧩 감정 퀴즈'} soundOn={soundOn} toggleSound={toggleSound} />
-            <div className="flex-1 flex flex-col items-center justify-center px-6">
-              <div className="card card-pink w-full max-w-2xl p-10 text-center">
-                {!fb ? (
-                  <>
-                    <div className="text-[90px] mb-5">{q.img}</div>
-                    <h2 className="text-3xl font-black text-slate-800 mb-8 word-keep">"{q.q}"</h2>
-                    <div className="grid grid-cols-2 gap-5">
-                      {q.opts.map((o, i) => (
-                        <button key={i} onClick={() => checkAns(o)}
-                          className="btn py-6 bg-slate-50 border-2 border-slate-100 hover:border-pink-400 hover:bg-pink-50 rounded-3xl text-3xl font-black text-slate-700 shadow-sm">
-                          {o}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-[90px] mb-4">{fb.ok ? '🌟' : '🧐'}</div>
-                    <h2 className={`text-4xl font-black mb-5 ${fb.ok ? 'text-emerald-500' : 'text-amber-500'}`}>
-                      {fb.ok ? '정답이에요!' : '다시 해볼까요?'}
-                    </h2>
-                    {fb.ok && <div className="bg-emerald-50 border-2 border-emerald-100 rounded-2xl p-5 mb-6 text-xl font-bold text-slate-600 italic">{fb.msg}</div>}
-                    <button onClick={fb.ok ? nextQ : () => setFb(null)}
-                      className={`btn w-full py-5 rounded-2xl font-black text-2xl text-white shadow-lg ${fb.ok ? 'bg-emerald-500 hover:bg-emerald-600' : 'bg-amber-400 hover:bg-amber-500'}`}>
-                      {fb.ok ? '다음 문제로 ▶' : '다시 선택하기'}
-                    </button>
-                  </>
-                )}
-              </div>
-              <p className="mt-5 text-base font-black text-slate-300">{qIdx + 1} / {list.length}</p>
-            </div>
-          </div>
-        );
-      }
-
-      /* ── 재도전 안내 ─────────────────────────────────────────────── */
-      if (phase === '재도전안내') return (
-        <div className="w-full h-full flex flex-col">
-          <Header label="💡 한번 더!" soundOn={soundOn} toggleSound={toggleSound} />
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
-            <div className="text-[110px] mb-6">💡</div>
-            <h2 className="text-3xl font-black text-slate-800 mb-4">포기하지 않는 마음이<br />제일 멋져요!</h2>
-            <p className="text-xl font-bold text-slate-400 mb-10">아쉬운 문제들을 다시 한번 풀어볼까요?</p>
-            <button onClick={() => { setReviewMode(true); setQIdx(0); setFb(null); setPhase('activity'); }}
-              className="btn py-5 px-12 bg-orange-500 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-orange-600">
-              🔄 다시 도전!
-            </button>
-          </div>
+        {/* 상장 부분 */}
+        <div className="card card-amber p-5 mb-3 text-center">
+          <h3 className="text-big font-black text-pink-600 mb-2">🌟 {student} 어린이 🌟</h3>
+          <p className="text-mid font-bold text-slate-500 italic mb-3 leading-relaxed word-keep">
+            자신의 감정을 바르게 이해하고 표현하는<br/>멋진 대장이 되었어요!
+          </p>
+          <div className="text-3xl mb-2">{'⭐'.repeat(stars)}{'☆'.repeat(5-stars)}</div>
+          {selfSticker && <p className="text-mid font-black text-pink-600">"{selfSticker}"</p>}
         </div>
-      );
 
-      /* ── 감정 톺아보기 ─────────────────────────────────────────── */
-      if (phase === 'wheel') {
-        const wq = wheels[wheelIdx];
-        if (!wq) { setPhase('self_rating'); return null; }
+        {/* 배움기록표 부분 */}
+        <div className="card card-indigo p-5 mb-3">
+          <h3 className="text-big font-black text-indigo-600 mb-3 text-center">📋 오늘의 배움 기록표</h3>
 
-        return (
-          <div className="w-full h-full flex flex-col" style={{ background: '#fffef5' }}>
-            <Header label={`🌈 상황 퀴즈 ${wheelIdx + 1}/3`} soundOn={soundOn} toggleSound={toggleSound} />
-            <div className="flex-1 flex flex-col justify-center px-6 py-2">
-              {/* 전체 너비 사용, 가운데 몰림 없도록 max-w 제거 */}
-              <div className="card card-amber w-full p-10 text-center">
-                {/* 제목 크게 */}
-                <p className="text-3xl font-black text-amber-600 mb-6">💛 어울리는 마음을 찾아주세요!</p>
-                <div className="bg-amber-50 border-2 border-amber-100 rounded-2xl p-6 mb-8">
-                  <p className="text-3xl font-black text-slate-700 italic">"{wq.sit}"</p>
-                </div>
-                <div className="grid grid-cols-3 gap-6 mb-8">
-                  {wq.choices.map((c, i) => {
-                    const em = EMOTION_DB.find(e => e.id === c) || {};
-                    return (
-                      <button key={i} onClick={() => { setWSel(c); setWFb(null); }}
-                        className={`btn p-8 rounded-3xl border-4 flex flex-col items-center gap-3 transition-all
-                          ${wSel === c ? 'border-amber-500 bg-amber-50 scale-105' : 'border-slate-100 bg-white hover:border-amber-300'}`}>
-                        <span className="text-[70px] leading-none">{em.emoji || '✨'}</span>
-                        <span className="text-3xl font-black text-slate-700">{c}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                {wSel && !wFb && (
-                  <button onClick={() => { const ok = wSel === wq.correct; setWFb(ok ? 'ok' : 'no'); if (ok) confetti({ particleCount: 60, spread: 50, origin: { y: .65 } }); }}
-                    className="btn w-full py-6 bg-amber-500 text-white font-black text-3xl rounded-2xl shadow-lg hover:bg-amber-600">
-                    확인하기!
-                  </button>
-                )}
-                {wFb && (
-                  <div className="flex flex-col gap-5 mt-2">
-                    <div className={`p-6 rounded-2xl border-2 ${wFb === 'ok' ? 'bg-emerald-50 border-emerald-100' : 'bg-orange-50 border-orange-100'}`}>
-                      <p className="text-3xl font-black mb-2">{wFb === 'ok' ? '완벽해요! 잘 알고 있네요 🎉' : '이럴 땐 이런 마음이에요!'}</p>
-                      <p className="text-2xl font-bold text-slate-600">정답: <span className="text-pink-600 font-black">"{wq.correct}"</span></p>
-                    </div>
-                    <button onClick={() => { setWSel(null); setWFb(null); if (wheelIdx < wheels.length - 1) setWheelIdx(w => w + 1); else setPhase('self_rating'); }}
-                      className="btn w-full py-6 bg-slate-800 text-white font-black text-3xl rounded-2xl shadow-lg">
-                      {wheelIdx < wheels.length - 1 ? '다음 상황 ▶' : '내 마음 점수 매기기 ⭐'}
-                    </button>
-                  </div>
-                )}
+          {/* 통계 4개 */}
+          <div className="grid grid-cols-4 gap-2 mb-3">
+            <div className="bg-pink-50 rounded-2xl p-3 text-center border-2 border-pink-100">
+              <div className="text-2xl font-black text-pink-600">{history.length}</div>
+              <div className="text-xs font-bold text-slate-500">문제</div>
+            </div>
+            <div className="bg-emerald-50 rounded-2xl p-3 text-center border-2 border-emerald-100">
+              <div className="text-2xl font-black text-emerald-600">{correctCnt}</div>
+              <div className="text-xs font-bold text-slate-500">맞힘</div>
+            </div>
+            <div className="bg-blue-50 rounded-2xl p-3 text-center border-2 border-blue-100">
+              <div className="text-2xl font-black text-blue-600">{accuracy}%</div>
+              <div className="text-xs font-bold text-slate-500">정답률</div>
+            </div>
+            <div className="bg-amber-50 rounded-2xl p-3 text-center border-2 border-amber-100">
+              <div className="text-2xl font-black text-amber-600">{learned.length}</div>
+              <div className="text-xs font-bold text-slate-500">배운 감정</div>
+            </div>
+          </div>
+
+          {/* 배운 감정 단어 */}
+          {learned.length > 0 && (
+            <div className="bg-pink-50 rounded-2xl p-3 border-2 border-pink-100">
+              <p className="text-base font-black text-pink-600 mb-2">✨ 오늘 배운 감정</p>
+              <div className="flex flex-wrap gap-2">
+                {learned.map((id,i)=>{
+                  const em = emotionData.find(e=>e.id===id) || {};
+                  return (
+                    <span key={i} className="bg-white border border-pink-200 rounded-full px-3 py-1 text-base font-black text-slate-700">
+                      {em.emoji} {id}
+                    </span>
+                  );
+                })}
               </div>
             </div>
-          </div>
-        );
-      }
-
-      /* ── 별점 자기 평가 ──────────────────────────────────────── */
-      if (phase === 'self_rating') return (
-        <div className="w-full h-full flex flex-col bg-white">
-          <Header label="⭐ 나의 별점" soundOn={soundOn} toggleSound={toggleSound} />
-          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-            <h2 className="text-4xl font-black text-slate-800 mb-4">오늘 공부 어땠나요?</h2>
-            <p className="text-xl font-bold text-slate-400 mb-10 italic">별표를 눌러 내 마음의 즐거움을 알려줘요!</p>
-            <div className="flex gap-4 mb-12 justify-center">
-              {[1, 2, 3, 4, 5].map(s => (
-                <button key={s} onClick={() => setStars(s)}
-                  className={`text-7xl btn ${stars >= s ? 'scale-125 drop-shadow-lg' : 'opacity-25 grayscale'}`}>
-                  ⭐
-                </button>
-              ))}
-            </div>
-            {stars > 0 && (
-              <button onClick={() => setPhase('recording')}
-                className="btn w-full max-w-xs py-5 bg-pink-500 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-pink-600">
-                다음으로 ➡️
-              </button>
-            )}
-          </div>
+          )}
         </div>
-      );
 
-      /* ── 녹음 과제 ────────────────────────────────────────────── */
-      if (phase === 'recording') return (
-        <div className="w-full h-full flex flex-col" style={{ background: '#fffaf5' }}>
-          <Header label="🎙️ 목소리 일기" soundOn={soundOn} toggleSound={toggleSound} />
-          <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-
-            <div className="card card-pink w-full max-w-xl p-8 mb-6">
-              {/* 질문 크게 */}
-              <p className="text-3xl font-black text-pink-600 mb-3">나는 어떨 때 즐거운가요?</p>
-              <p className="text-xl font-bold text-slate-500 mb-6">또는 나는 어떨 때 행복한가요?</p>
-              {/* 예시 문장 크게 */}
-              <div className="bg-amber-50 border-2 border-amber-100 rounded-2xl p-5 mb-8">
-                <p className="text-base font-black text-slate-400 mb-2">📝 예시 문장</p>
-                <p className="text-xl font-bold text-pink-600">"나는 친구랑 술래잡기 할 때 제일 즐거워요!"</p>
-              </div>
-
-              {recStep === 'idle' && (
-                <button onClick={startRec}
-                  className="btn w-full py-6 bg-rose-500 text-white rounded-2xl font-black text-3xl shadow-lg animate-pulse hover:animate-none hover:bg-rose-600">
-                  🔴 녹음 시작!
-                </button>
-              )}
-              {recStep === 'rec' && (
-                <div className="flex flex-col gap-4">
-                  <p className="text-2xl font-black text-rose-500 animate-pulse">🔴 녹음 중... 요정이 듣고 있어요!</p>
-                  <button onClick={stopRec}
-                    className="btn w-full py-6 bg-slate-800 text-white rounded-2xl font-black text-2xl shadow-lg">
-                    ⏹ 다 말했어요! 완료
-                  </button>
-                </div>
-              )}
-              {recStep === 'done' && (
-                <div className="flex flex-col gap-4">
-                  <p className="text-2xl font-black text-emerald-600 mb-2">✅ 녹음이 잘 됐어요!</p>
-                  {audioUrl && <audio controls src={audioUrl} className="w-full rounded-xl" />}
-                  <div className="flex gap-4 mt-2">
-                    <button onClick={() => { setRecStep('idle'); setAudioUrl(null); setAudioB64(null); }}
-                      className="btn flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-lg">
-                      🔄 다시 하기
-                    </button>
-                    <button onClick={saveResult}
-                      className="btn flex-[2] py-4 bg-indigo-600 text-white rounded-2xl font-black text-xl shadow-lg hover:bg-indigo-700">
-                      제출하기 🏆
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {recStep !== 'rec' && (
-              <button onClick={() => setPhase('report')}
-                className="btn text-slate-300 underline font-bold text-base">
-                말하기가 쑥스러우면 넘어가도 돼요
-              </button>
-            )}
-          </div>
+        {/* 버튼 */}
+        <div className="flex gap-3">
+          <button onClick={()=>{sfx.win(soundOn); downloadCertificate(student, learned, stars, history, selfSticker)}}
+            className="btn flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-big shadow-lg">
+            🖼️ 상장+기록표 저장
+          </button>
+          <button onClick={()=>window.location.reload()}
+            className="btn flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-black text-big shadow-lg">
+            🏠 처음으로
+          </button>
         </div>
-      );
+      </div>
+    );
+  }
 
-      /* ── 최종 결과 & 수료증 ────────────────────────────────────── */
-      if (phase === 'report') {
-        const learned = [...new Set(history.filter(h => h.ok).map(h => h.concept))];
-        return (
-          <div className="w-full h-full flex flex-col px-8 py-4 bg-white relative overflow-auto scroll-y">
-            {saving && (
-              <div className="absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-50 rounded-[2.5rem]">
-                <div className="w-14 h-14 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin mb-4" />
-                <p className="text-xl font-black text-slate-700">기록을 저장하는 중이에요...</p>
-              </div>
-            )}
+  return null;
+};
 
-            {/* 제목 */}
-            <div className="text-center mb-4">
-              <div className="text-6xl mb-2">🏆</div>
-              <h1 className="text-4xl font-black text-slate-900">모험 대장증</h1>
-            </div>
-
-            {/* 가로 레이아웃: 왼쪽 인증내용 / 오른쪽 배운 감정 */}
-            <div className="flex gap-6 flex-1 mb-5">
-              {/* 왼쪽 */}
-              <div className="card card-amber flex-1 p-8 flex flex-col items-center justify-center text-center">
-                <div className="text-6xl mb-4">🏅</div>
-                <h3 className="text-3xl font-black text-slate-800 mb-4">{student} 어린이!</h3>
-                <p className="text-xl font-bold text-slate-500 italic mb-4 leading-relaxed">
-                  자신의 감정을 바르게 이해하고<br />표현하는 멋진 대장이 되었습니다.
-                </p>
-                <p className="text-base font-mono text-slate-300 tracking-widest">{new Date().toLocaleDateString('ko-KR')}</p>
-              </div>
-
-              {/* 오른쪽: 배운 감정 목록 */}
-              {learned.length > 0 && (
-                <div className="card card-pink flex-1 p-8 flex flex-col">
-                  <p className="text-2xl font-black text-pink-500 mb-5 text-center">✨ 오늘 배운 감정들</p>
-                  <div className="grid grid-cols-2 gap-3 flex-1 content-center">
-                    {learned.map((id, i) => {
-                      const em = EMOTION_DB.find(e => e.id === id) || {};
-                      return (
-                        <div key={i} className="bg-pink-50 border-2 border-pink-100 rounded-2xl px-4 py-3 flex items-center gap-3">
-                          <span className="text-4xl">{em.emoji}</span>
-                          <span className="text-2xl font-black text-slate-700">{id}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 버튼 */}
-            <div className="flex gap-4">
-              <button onClick={() => downloadCert(student)}
-                className="btn flex-1 py-5 bg-indigo-600 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-indigo-700">
-                🖼️ 수료증 저장
-              </button>
-              <button onClick={() => window.location.reload()}
-                className="btn flex-1 py-5 bg-slate-800 text-white rounded-2xl font-black text-2xl shadow-lg hover:bg-slate-700">
-                🏠 처음으로
-              </button>
-            </div>
-          </div>
-        );
-      }
-
-      return null;
-    };
-
-    ReactDOM.createRoot(document.getElementById('app')).render(<App />);
-  </script>
+ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
+</script>
 </body>
-
 </html>
