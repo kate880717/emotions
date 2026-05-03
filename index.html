@@ -70,13 +70,97 @@ body{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif;background:#dde3ee}
 
 textarea{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif}
 
-/* 무드미터 사분면 */
-.mood-quad{transition:all .3s;cursor:pointer;border-radius:1rem}
-.mood-quad.active{transform:scale(1.05);box-shadow:0 8px 24px rgba(0,0,0,.15)}
-.mood-red{background:linear-gradient(135deg,#fecaca 0%,#fca5a5 100%);border:3px solid #ef4444}
-.mood-yellow{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:3px solid #f59e0b}
-.mood-blue{background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);border:3px solid #3b82f6}
-.mood-green{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border:3px solid #10b981}
+/* 무드미터 사분면 - 가독성 강화 */
+.mood-grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:10px;
+  position:relative;
+}
+.mood-quad{
+  transition:all .3s;
+  border-radius:1.25rem;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  position:relative;
+  overflow:hidden;
+}
+.mood-quad.active{
+  transform:scale(1.04);
+  box-shadow:0 12px 32px rgba(0,0,0,.18);
+  z-index:5;
+}
+.mood-quad.dim{
+  opacity:.55;
+  filter:saturate(.6);
+}
+.mood-red{background:linear-gradient(135deg,#fecaca 0%,#fca5a5 100%);border:4px solid #ef4444}
+.mood-yellow{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:4px solid #f59e0b}
+.mood-blue{background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);border:4px solid #3b82f6}
+.mood-green{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border:4px solid #10b981}
+
+.quad-title{
+  font-size:1.35rem;
+  font-weight:900;
+  margin-bottom:4px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.quad-sub{
+  font-size:.9rem;
+  font-weight:bold;
+  margin-bottom:8px;
+  opacity:.85;
+}
+.quad-emotions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  justify-content:center;
+  width:100%;
+}
+.emotion-chip{
+  background:rgba(255,255,255,.7);
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:.95rem;
+  font-weight:bold;
+  color:#1e293b;
+  white-space:nowrap;
+}
+.emotion-chip.highlight{
+  background:white;
+  color:#db2777;
+  font-weight:900;
+  font-size:1.15rem;
+  padding:6px 14px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  animation:pulse-emotion 1.2s ease-in-out infinite;
+  transform:scale(1.15);
+}
+@keyframes pulse-emotion{
+  0%,100%{transform:scale(1.15)}
+  50%{transform:scale(1.25)}
+}
+
+.mood-axis-x{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:1rem;
+  font-weight:900;
+  color:#475569;
+  padding:0 8px;
+}
+.mood-axis-y-left, .mood-axis-y-right{
+  font-size:1rem;
+  font-weight:900;
+  color:#475569;
+}
 </style>
 <script>
 /* ── GAS 웹앱 URL ──────────────────────────────────── */
@@ -468,66 +552,88 @@ const HighlightedText = ({text, highlightIdx, className=""}) => {
   );
 };
 
-/* 무드미터 - 4사분면 */
-const MoodMeter = ({activeQuad, emotion, size='normal'}) => {
-  const isLarge = size === 'large';
-  const cellH = isLarge ? 'h-44' : 'h-32';
-  return (
-    <div className="relative w-full max-w-2xl mx-auto">
-      {/* 축 라벨 */}
-      <div className="text-center text-base font-black text-slate-500 mb-1">⬆️ 활기참</div>
-      <div className="grid grid-cols-2 gap-2 relative">
-        {/* 가로축 라벨 (왼쪽) */}
-        <div className="absolute -left-7 top-1/2 -translate-y-1/2 -rotate-90 text-base font-black text-slate-500 whitespace-nowrap">
-          ⬅️ 힘듦
-        </div>
-        {/* 가로축 라벨 (오른쪽) */}
-        <div className="absolute -right-7 top-1/2 -translate-y-1/2 rotate-90 text-base font-black text-slate-500 whitespace-nowrap">
-          유쾌 ➡️
-        </div>
+/* 무드미터 - 4사분면 (감정 칩 표시) */
+const MoodMeter = ({activeQuad, emotion, allEmotions, size='normal'}) => {
+  // 사분면별 감정 그룹화
+  const grouped = {red:[], yellow:[], blue:[], green:[]};
+  (allEmotions || []).forEach(e => {
+    if(grouped[e.quad]) grouped[e.quad].push(e);
+  });
 
-        {/* 빨강 (왼쪽 위) */}
-        <div className={`mood-quad mood-red ${cellH} flex flex-col items-center justify-center p-3 ${activeQuad==='red'?'active':''}`}>
-          <div className="text-2xl mb-1">🔥</div>
-          <div className="text-base font-black text-red-700">활기찬 힘듦</div>
-          {activeQuad === 'red' && emotion && (
-            <div className="mt-1 bg-white/80 rounded-full px-3 py-1 font-black text-red-600 bounce-in">
-              {emotion.emoji} {emotion.id}
-            </div>
-          )}
+  // 표시할 최대 칩 개수 (공간 절약)
+  const maxChips = size === 'large' ? 8 : 6;
+
+  const renderQuad = (quadKey, title, subtitle, icon, textColor) => {
+    const emotions = grouped[quadKey] || [];
+    // 활성 감정이 이 사분면에 있으면 우선 표시
+    let display = [...emotions];
+    if(emotion && emotion.quad === quadKey){
+      display = [emotion, ...emotions.filter(e => e.id !== emotion.id)];
+    }
+    display = display.slice(0, maxChips);
+
+    const isActive = activeQuad === quadKey;
+    const isDim = activeQuad && activeQuad !== quadKey;
+
+    return (
+      <div className={`mood-quad mood-${quadKey} ${isActive?'active':''} ${isDim?'dim':''}`}>
+        <div className="quad-title" style={{color: textColor}}>
+          <span className="text-2xl">{icon}</span>
+          <span>{title}</span>
         </div>
-        {/* 노랑 (오른쪽 위) */}
-        <div className={`mood-quad mood-yellow ${cellH} flex flex-col items-center justify-center p-3 ${activeQuad==='yellow'?'active':''}`}>
-          <div className="text-2xl mb-1">☀️</div>
-          <div className="text-base font-black text-amber-700">활기찬 즐거움</div>
-          {activeQuad === 'yellow' && emotion && (
-            <div className="mt-1 bg-white/80 rounded-full px-3 py-1 font-black text-amber-600 bounce-in">
-              {emotion.emoji} {emotion.id}
-            </div>
-          )}
-        </div>
-        {/* 파랑 (왼쪽 아래) */}
-        <div className={`mood-quad mood-blue ${cellH} flex flex-col items-center justify-center p-3 ${activeQuad==='blue'?'active':''}`}>
-          <div className="text-2xl mb-1">💧</div>
-          <div className="text-base font-black text-blue-700">잔잔한 힘듦</div>
-          {activeQuad === 'blue' && emotion && (
-            <div className="mt-1 bg-white/80 rounded-full px-3 py-1 font-black text-blue-600 bounce-in">
-              {emotion.emoji} {emotion.id}
-            </div>
-          )}
-        </div>
-        {/* 초록 (오른쪽 아래) */}
-        <div className={`mood-quad mood-green ${cellH} flex flex-col items-center justify-center p-3 ${activeQuad==='green'?'active':''}`}>
-          <div className="text-2xl mb-1">🌿</div>
-          <div className="text-base font-black text-emerald-700">잔잔한 평온</div>
-          {activeQuad === 'green' && emotion && (
-            <div className="mt-1 bg-white/80 rounded-full px-3 py-1 font-black text-emerald-600 bounce-in">
-              {emotion.emoji} {emotion.id}
-            </div>
+        <div className="quad-sub" style={{color: textColor}}>{subtitle}</div>
+        <div className="quad-emotions">
+          {display.map((em, i) => (
+            <span key={em.id} className={`emotion-chip ${emotion && em.id === emotion.id ? 'highlight' : ''}`}>
+              {em.emoji} {em.id}
+            </span>
+          ))}
+          {emotions.length > maxChips && !isActive && (
+            <span className="emotion-chip" style={{opacity:.6,fontSize:'.85rem'}}>
+              +{emotions.length - maxChips}
+            </span>
           )}
         </div>
       </div>
-      <div className="text-center text-base font-black text-slate-500 mt-1">⬇️ 잔잔함</div>
+    );
+  };
+
+  return (
+    <div className="relative w-full max-w-3xl mx-auto">
+      {/* 위 라벨 */}
+      <div className="mood-axis-x mb-2">
+        <span></span>
+        <span>⬆️ 활기참 (에너지 높음)</span>
+        <span></span>
+      </div>
+
+      {/* 본체 (좌우 라벨 포함) */}
+      <div className="flex items-stretch gap-3">
+        {/* 왼쪽 축 */}
+        <div className="flex items-center justify-center" style={{writingMode:'vertical-rl', transform:'rotate(180deg)'}}>
+          <span className="mood-axis-y-left whitespace-nowrap">⬅️ 힘듦</span>
+        </div>
+
+        {/* 4사분면 그리드 */}
+        <div className="flex-1 mood-grid">
+          {renderQuad('red',    '활기찬 힘듦',     '화나고 무서운 마음', '🔥', '#b91c1c')}
+          {renderQuad('yellow', '활기찬 즐거움',   '신나고 기쁜 마음',   '☀️', '#b45309')}
+          {renderQuad('blue',   '잔잔한 힘듦',     '슬프고 외로운 마음', '💧', '#1d4ed8')}
+          {renderQuad('green',  '잔잔한 평온',     '편안하고 따뜻한 마음', '🌿', '#047857')}
+        </div>
+
+        {/* 오른쪽 축 */}
+        <div className="flex items-center justify-center" style={{writingMode:'vertical-rl'}}>
+          <span className="mood-axis-y-right whitespace-nowrap">유쾌 ➡️</span>
+        </div>
+      </div>
+
+      {/* 아래 라벨 */}
+      <div className="mood-axis-x mt-2">
+        <span></span>
+        <span>⬇️ 잔잔함 (에너지 낮음)</span>
+        <span></span>
+      </div>
     </div>
   );
 };
@@ -1091,11 +1197,11 @@ const App = () => {
         <h2 className="text-big font-black text-slate-800 mb-3 text-center">
           {soundOn ? <HighlightedText text="우리 마음에는 네 가지 색깔이 있어요!" highlightIdx={highlightIdx}/> : '우리 마음에는 네 가지 색깔이 있어요!'}
         </h2>
-        <p className="text-mid font-bold text-slate-500 mb-5 italic text-center word-keep">
+        <p className="text-mid font-bold text-slate-500 mb-4 italic text-center word-keep">
           상황에 따라 마음 색깔이 달라져요. 함께 알아볼까요?
         </p>
-        <div className="w-full px-4 mb-5">
-          <MoodMeter activeQuad={null} emotion={null} size="normal"/>
+        <div className="w-full px-2 mb-4">
+          <MoodMeter activeQuad={null} emotion={null} allEmotions={emotionData} size="normal"/>
         </div>
         <button onClick={()=>{sfx.click(soundOn); setPhase('concept')}}
           className="btn w-full max-w-xs py-5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl font-black text-big shadow-lg">
@@ -1116,13 +1222,8 @@ const App = () => {
       <div className="w-full h-full flex flex-col" style={{background:'#f8fbff'}}>
         <Header label={`💡 감정 배우기 ${conceptIdx+1}/${conceptList.length}`} soundOn={soundOn} toggleSound={toggleSound}/>
         <div className="flex-1 flex flex-col px-4 py-2 scroll-y">
-          {/* 무드미터 (작게) */}
-          <div className="mb-3">
-            <MoodMeter activeQuad={em.quad} emotion={em} size="normal"/>
-          </div>
-
           {/* 개념 카드 */}
-          <div className="card card-indigo w-full max-w-2xl mx-auto p-5 flex flex-col items-center text-center">
+          <div className="card card-indigo w-full max-w-3xl mx-auto p-5 flex flex-col items-center text-center mb-3">
             <div className="bg-indigo-50 border-2 border-indigo-100 rounded-2xl p-4 mb-3 w-full">
               <p className="text-base font-black text-slate-400 mb-1">📍 이런 상황이 있어요</p>
               <p className="text-mid font-bold text-slate-700 italic">"{em.sit}"</p>
@@ -1134,8 +1235,15 @@ const App = () => {
             </div>
             <p className="text-mid font-bold text-slate-600 word-keep max-w-md mt-2">{em.desc}</p>
           </div>
+
+          {/* 무드미터 - 활성 감정 표시 */}
+          <div className="mb-3">
+            <p className="text-center text-base font-black text-slate-500 mb-2">⬇️ 마음 지도에서 찾아봐요</p>
+            <MoodMeter activeQuad={em.quad} emotion={em} allEmotions={emotionData} size="normal"/>
+          </div>
+
           <button onClick={()=>{sfx.click(soundOn); if(conceptIdx < conceptList.length-1) setConceptIdx(c=>c+1); else { setQIdx(0); setPhase('activity'); }}}
-            className="btn mt-4 w-full max-w-2xl mx-auto py-4 rounded-2xl font-black text-big shadow-lg text-white"
+            className="btn mt-2 w-full max-w-3xl mx-auto py-4 rounded-2xl font-black text-big shadow-lg text-white"
             style={{backgroundColor:'#4338ca'}}>
             {conceptIdx < conceptList.length-1 ? '다음 감정 배우기 ➡️' : '퀴즈 시작! 🎯'}
           </button>
@@ -1184,7 +1292,8 @@ const App = () => {
                 {/* 무드미터에 정답 위치 표시 */}
                 {ansEmotion && (
                   <div className="my-3">
-                    <MoodMeter activeQuad={ansEmotion.quad} emotion={ansEmotion} size="normal"/>
+                    <p className="text-center text-base font-black text-slate-500 mb-2">⬇️ 마음 지도에서 찾아봐요</p>
+                    <MoodMeter activeQuad={ansEmotion.quad} emotion={ansEmotion} allEmotions={emotionData} size="normal"/>
                   </div>
                 )}
                 <button onClick={nextQ}
