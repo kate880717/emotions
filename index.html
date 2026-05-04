@@ -61,54 +61,66 @@ body{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif;background:#dde3ee}
 .scroll-y::-webkit-scrollbar{width:6px}
 .scroll-y::-webkit-scrollbar-thumb{background:#fbcfe8;border-radius:3px}
 
-/* 큰 글씨 - 저학년 가독성 */
-.text-mega{font-size:clamp(2.4rem,4.5vw,3.4rem);line-height:1.3}
-.text-big{font-size:clamp(1.85rem,3.5vw,2.6rem);line-height:1.4}
-.text-mid{font-size:clamp(1.4rem,2.8vw,1.95rem);line-height:1.5}
-.text-base-lg{font-size:clamp(1.15rem,2.2vw,1.45rem);line-height:1.5}
+/* 큰 글씨 - 저학년 가독성 (균형 조정) */
+.text-mega{font-size:clamp(2rem,3.8vw,2.8rem);line-height:1.25}
+.text-big{font-size:clamp(1.6rem,3vw,2.2rem);line-height:1.35}
+.text-mid{font-size:clamp(1.25rem,2.4vw,1.7rem);line-height:1.45}
+.text-base-lg{font-size:clamp(1.05rem,2vw,1.3rem);line-height:1.5}
 
 textarea{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif}
 
 /* 무드미터 사분면 (모달용) */
-.mood-wrap{width:100%;height:100%;display:flex;flex-direction:column}
+.mood-wrap{width:100%;height:100%;display:flex;flex-direction:column;min-height:0}
 .mood-grid{
   display:grid;
   grid-template-columns:repeat(2, 1fr);
-  gap:14px;
+  gap:12px;
   width:100%;
   flex:1;
   min-height:0;
 }
 .mood-quad{
   transition:all .3s;
-  border-radius:1.5rem;
-  padding:18px 20px;
+  border-radius:1.25rem;
+  padding:12px 14px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
   position:relative;
   overflow:hidden;
   min-height:0;
 }
 .mood-quad.active{transform:scale(1.02);box-shadow:0 12px 32px rgba(0,0,0,.18);z-index:5}
 .mood-quad.dim{opacity:.45;filter:saturate(.5)}
-.mood-red{background:linear-gradient(135deg,#fecaca 0%,#fca5a5 100%);border:5px solid #ef4444}
-.mood-yellow{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:5px solid #f59e0b}
-.mood-blue{background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);border:5px solid #3b82f6}
-.mood-green{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border:5px solid #10b981}
+.mood-red{background:linear-gradient(135deg,#fecaca 0%,#fca5a5 100%);border:4px solid #ef4444}
+.mood-yellow{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:4px solid #f59e0b}
+.mood-blue{background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);border:4px solid #3b82f6}
+.mood-green{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border:4px solid #10b981}
 
-.quad-header{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:6px}
-.quad-icon{font-size:2.8rem}
-.quad-title{font-size:2.2rem;font-weight:900;letter-spacing:-.5px}
-.quad-sub{font-size:1.35rem;font-weight:bold;margin-bottom:14px;opacity:.88;text-align:center;white-space:nowrap}
+.quad-header{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:2px;flex-shrink:0}
+.quad-icon{font-size:1.8rem}
+.quad-title{font-size:1.5rem;font-weight:900;letter-spacing:-.5px}
+.quad-sub{font-size:1rem;font-weight:bold;margin-bottom:8px;opacity:.88;text-align:center;white-space:nowrap;flex-shrink:0}
 
-.quad-emotions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-content:center;width:100%}
+.quad-emotions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  justify-content:center;
+  align-content:flex-start;
+  width:100%;
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+}
+.quad-emotions::-webkit-scrollbar{width:0}
+
 .emotion-chip{
-  background:rgba(255,255,255,.8);
-  padding:8px 18px;
+  background:rgba(255,255,255,.85);
+  padding:5px 12px;
   border-radius:999px;
-  font-size:1.4rem;
+  font-size:1.05rem;
   font-weight:bold;
   color:#1e293b;
   white-space:nowrap;
@@ -118,28 +130,36 @@ textarea{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif}
   background:white;
   color:#db2777;
   font-weight:900;
-  font-size:1.75rem;
-  padding:12px 26px;
+  font-size:1.3rem;
+  padding:8px 18px;
   box-shadow:0 6px 20px rgba(0,0,0,.2);
   animation:pulse-emotion 1.2s ease-in-out infinite;
-  transform:scale(1.1);
+  transform:scale(1.05);
 }
-@keyframes pulse-emotion{0%,100%{transform:scale(1.1)}50%{transform:scale(1.2)}}
+@keyframes pulse-emotion{0%,100%{transform:scale(1.05)}50%{transform:scale(1.12)}}
 
-.mood-axis-x{text-align:center;font-size:1.2rem;font-weight:900;color:#475569;padding:6px 0}
+.mood-axis-x{text-align:center;font-size:1.1rem;font-weight:900;color:#475569;padding:6px 0;flex-shrink:0}
 .mood-axis-y-wrap{display:flex;align-items:stretch;gap:8px;width:100%;flex:1;min-height:0}
 .mood-axis-y{
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:1.2rem;
+  font-size:1.1rem;
   font-weight:900;
   color:#475569;
-  writing-mode:vertical-rl;
   white-space:nowrap;
   flex-shrink:0;
+  width:32px;
+  text-align:center;
 }
-.mood-axis-y.left{transform:rotate(180deg)}
+.mood-axis-y span{
+  display:inline-block;
+  transform:rotate(-90deg);
+  transform-origin:center;
+}
+.mood-axis-y.right span{
+  transform:rotate(90deg);
+}
 
 /* 모달 */
 .modal-overlay{
@@ -586,14 +606,14 @@ const MoodMeter = ({activeQuad, emotion, allEmotions}) => {
     <div className="mood-wrap">
       <div className="mood-axis-x">⬆️ 활기참 (에너지 높음)</div>
       <div className="mood-axis-y-wrap">
-        <div className="mood-axis-y left">⬅️ 힘듦</div>
+        <div className="mood-axis-y left"><span>⬅️ 힘듦</span></div>
         <div className="mood-grid flex-1">
           {renderQuad('red',    '활기찬 힘듦',     '화나고 무서운 마음',   '🔥', '#b91c1c')}
           {renderQuad('yellow', '활기찬 즐거움',   '신나고 기쁜 마음',     '☀️', '#b45309')}
           {renderQuad('blue',   '잔잔한 힘듦',     '슬프고 외로운 마음',   '💧', '#1d4ed8')}
           {renderQuad('green',  '잔잔한 평온',     '편안하고 따뜻한 마음', '🌿', '#047857')}
         </div>
-        <div className="mood-axis-y">유쾌 ➡️</div>
+        <div className="mood-axis-y right"><span>유쾌 ➡️</span></div>
       </div>
       <div className="mood-axis-x">⬇️ 잔잔함 (에너지 낮음)</div>
     </div>
@@ -740,17 +760,17 @@ const VoiceRecorder = ({prompt, example, onComplete, soundOn, color='pink'}) => 
   },[]);
 
   return (
-    <div className={`card card-${color==='emerald'?'emerald':color} w-full max-w-2xl p-6`}>
-      <p className={`text-big font-black ${c.text} mb-2 text-center`}>{prompt}</p>
-      {example && <div className={`${c.light} border-2 ${c.border} rounded-2xl p-4 mb-5`}>
+    <div className={`card card-${color==='emerald'?'emerald':color} w-full max-w-2xl p-5`}>
+      <p className={`text-mid font-black ${c.text} mb-2 text-center word-keep`}>{prompt}</p>
+      {example && <div className={`${c.light} border-2 ${c.border} rounded-2xl p-3 mb-4`}>
         <p className="text-base-lg font-bold text-slate-400 mb-1">📝 예시</p>
-        <p className="text-mid font-bold text-slate-700">"{example}"</p>
+        <p className="text-base-lg font-bold text-slate-700">"{example}"</p>
       </div>}
 
       {mode === 'idle' && (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <button onClick={startRec}
-            className={`btn w-full py-5 ${c.bg} ${c.hover} text-white rounded-2xl font-black text-big shadow-lg flex items-center justify-center gap-3`}>
+            className={`btn w-full py-4 ${c.bg} ${c.hover} text-white rounded-2xl font-black text-mid shadow-lg flex items-center justify-center gap-3 whitespace-nowrap`}>
             🎙️ 말하기로 시작!
           </button>
           <div className="flex items-center gap-3">
@@ -760,18 +780,18 @@ const VoiceRecorder = ({prompt, example, onComplete, soundOn, color='pink'}) => 
           </div>
           <textarea value={textInput} onChange={e=>setTextInput(e.target.value)}
             placeholder="여기에 직접 적어도 좋아요!"
-            className="w-full p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl text-mid font-bold focus:outline-none focus:border-pink-300 resize-none"
-            rows="3"/>
+            className="w-full p-3 bg-slate-50 border-2 border-slate-200 rounded-2xl text-base-lg font-bold focus:outline-none focus:border-pink-300 resize-none"
+            rows="2"/>
           <button onClick={submit} disabled={!textInput.trim()}
-            className={`btn w-full py-4 ${textInput.trim() ? 'bg-slate-700 hover:bg-slate-800 text-white' : 'bg-slate-200 text-slate-400 btn-disabled'} rounded-2xl font-black text-big shadow-md`}>
+            className={`btn w-full py-3 ${textInput.trim() ? 'bg-slate-700 hover:bg-slate-800 text-white' : 'bg-slate-200 text-slate-400 btn-disabled'} rounded-2xl font-black text-mid shadow-md whitespace-nowrap`}>
             ⌨️ 적은 내용 제출하기
           </button>
         </div>
       )}
 
       {mode === 'recording' && (
-        <div className="space-y-4">
-          <div className="relative bg-rose-50 border-2 border-rose-200 rounded-2xl p-5 min-h-[100px]">
+        <div className="space-y-3">
+          <div className="relative bg-rose-50 border-2 border-rose-200 rounded-2xl p-4 min-h-[90px]">
             <div className="absolute top-3 right-4 flex items-center gap-2">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"/>
@@ -780,36 +800,36 @@ const VoiceRecorder = ({prompt, example, onComplete, soundOn, color='pink'}) => 
               <span className="text-base-lg font-black text-rose-500">{recDuration}초</span>
             </div>
             <p className="text-base-lg font-black text-rose-400 mb-2">🎙️ 듣고 있어요...</p>
-            <p className="text-mid font-bold text-slate-700 leading-relaxed">
+            <p className="text-base-lg font-bold text-slate-700 leading-relaxed">
               {transcript}
               <span className="text-slate-400">{interimText}</span>
               {!transcript && !interimText && <span className="text-slate-300 italic">말하는 내용이 여기에 표시돼요!</span>}
             </p>
           </div>
           <button onClick={stopRec}
-            className="btn w-full py-5 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl font-black text-big shadow-lg">
+            className="btn w-full py-4 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl font-black text-mid shadow-lg whitespace-nowrap">
             ⏹ 다 말했어요!
           </button>
         </div>
       )}
 
       {mode === 'done' && (
-        <div className="space-y-4">
-          <div className={`${c.light} border-2 ${c.border} rounded-2xl p-4`}>
+        <div className="space-y-3">
+          <div className={`${c.light} border-2 ${c.border} rounded-2xl p-3`}>
             <p className="text-base-lg font-black text-emerald-600 mb-2">✅ 들은 내용</p>
             <textarea value={transcript || textInput} onChange={e=>setTranscript(e.target.value)}
               placeholder="고치고 싶으면 직접 수정해도 돼요!"
-              className="w-full p-3 bg-white border border-slate-200 rounded-xl text-mid font-bold focus:outline-none focus:border-pink-300 resize-none"
-              rows="3"/>
+              className="w-full p-3 bg-white border border-slate-200 rounded-xl text-base-lg font-bold focus:outline-none focus:border-pink-300 resize-none"
+              rows="2"/>
           </div>
           {audioUrl && <audio controls src={audioUrl} className="w-full rounded-xl"/>}
           <div className="flex gap-3">
             <button onClick={reset}
-              className="btn flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black text-mid">
+              className="btn flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black text-base-lg whitespace-nowrap">
               🔄 다시
             </button>
             <button onClick={submit}
-              className={`btn flex-[2] py-4 ${c.bg} ${c.hover} text-white rounded-2xl font-black text-big shadow-lg`}>
+              className={`btn flex-[2] py-3 ${c.bg} ${c.hover} text-white rounded-2xl font-black text-mid shadow-lg whitespace-nowrap`}>
               제출하기 🏆
             </button>
           </div>
@@ -1122,9 +1142,9 @@ const App = () => {
   if(phase === 'start_voice') return (
     <div className="w-full h-full flex flex-col" style={{background:'#fffaf5'}}>
       <Header label="🌅 오늘 나의 마음은?" soundOn={soundOn} toggleSound={toggleSound}/>
-      <div className="flex-1 flex flex-col items-center justify-center px-6 scroll-y">
-        <div className="text-6xl mb-3 float">🌟</div>
-        <h2 className="text-big font-black text-slate-800 mb-4 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center px-5 pb-3 overflow-hidden">
+        <div className="text-5xl mb-2 float">🌟</div>
+        <h2 className="text-big font-black text-slate-800 mb-3 text-center">
           {soundOn ? <HighlightedText text="오늘 나의 마음은 어떤가요?" highlightIdx={highlightIdx}/> : '오늘 나의 마음은 어떤가요?'}
         </h2>
         <VoiceRecorder
@@ -1135,7 +1155,7 @@ const App = () => {
           color="pink"
         />
         <button onClick={()=>{sfx.click(soundOn); setStartEmotion({text:'',audioBase64:null}); setPhase('intro')}}
-          className="mt-3 text-slate-300 hover:text-slate-500 underline font-bold text-base-lg">
+          className="mt-2 text-slate-300 hover:text-slate-500 underline font-bold text-base-lg shrink-0">
           말하기가 쑥스러우면 넘어가도 돼요
         </button>
       </div>
@@ -1169,11 +1189,12 @@ const App = () => {
       <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
         <h2 className="text-mega font-black text-slate-800 mb-3">몇 문제에 도전해볼까요?</h2>
         <p className="text-mid font-bold text-slate-400 mb-7 italic">마음에 드는 만큼 고를 수 있어요!</p>
-        <div className="flex flex-col gap-4 w-full max-w-sm">
+        <div className="flex flex-col gap-4 w-full max-w-md">
           {[5,10,15].map((n,i)=>(
             <button key={n} onClick={()=>handleLevel(n)}
-              className="btn py-6 bg-white border-4 border-pink-100 hover:border-pink-400 rounded-3xl text-mega font-black text-pink-500 shadow-md flex items-center justify-between px-8">
-              <span>{n} 문제 도전</span>
+              className="btn py-6 bg-white border-4 border-pink-100 hover:border-pink-400 rounded-3xl font-black text-pink-500 shadow-md flex items-center justify-between px-7 whitespace-nowrap"
+              style={{fontSize:'clamp(1.6rem,3.2vw,2.2rem)'}}>
+              <span>{n}문제 도전</span>
               <span className="text-5xl">{['🌱','🌿','🌳'][i]}</span>
             </button>
           ))}
@@ -1207,11 +1228,11 @@ const App = () => {
               return (
                 <button key={q.key} onClick={()=>openMoodModal(q.key, null)}
                   className={`mood-quad mood-${q.key} btn flex flex-col items-center justify-center text-center`}
-                  style={{cursor:'pointer'}}>
-                  <div className="text-7xl mb-3">{q.icon}</div>
-                  <div style={{color: q.textColor, fontSize:'2.4rem', fontWeight:900}}>{q.title}</div>
-                  <div style={{color: q.textColor, fontSize:'1.5rem', fontWeight:'bold', marginTop:'8px', marginBottom:'10px'}}>{q.sub}</div>
-                  <div className="bg-white/70 rounded-full px-5 py-2 font-black text-slate-700" style={{fontSize:'1.2rem'}}>
+                  style={{cursor:'pointer', padding:'16px'}}>
+                  <div style={{fontSize:'clamp(3rem,6vw,4.5rem)', lineHeight:1, marginBottom:'10px'}}>{q.icon}</div>
+                  <div style={{color: q.textColor, fontSize:'clamp(1.4rem,2.6vw,2rem)', fontWeight:900, whiteSpace:'nowrap'}}>{q.title}</div>
+                  <div style={{color: q.textColor, fontSize:'clamp(1rem,1.8vw,1.3rem)', fontWeight:'bold', marginTop:'6px', marginBottom:'10px', whiteSpace:'nowrap'}}>{q.sub}</div>
+                  <div className="bg-white/70 rounded-full px-4 py-2 font-black text-slate-700 whitespace-nowrap" style={{fontSize:'clamp(.9rem,1.6vw,1.1rem)'}}>
                     감정 {count}개 보기 🔍
                   </div>
                 </button>
@@ -1431,9 +1452,9 @@ const App = () => {
   if(phase === 'end_voice') return (
     <div className="w-full h-full flex flex-col" style={{background:'#f0fdf4'}}>
       <Header label="🌟 나의 다짐" soundOn={soundOn} toggleSound={toggleSound}/>
-      <div className="flex-1 flex flex-col items-center justify-center px-6 scroll-y">
-        <div className="text-6xl mb-3 float">🌈</div>
-        <h2 className="text-big font-black text-slate-800 mb-4 text-center word-keep">
+      <div className="flex-1 flex flex-col items-center justify-center px-5 pb-3 overflow-hidden">
+        <div className="text-5xl mb-2 float">🌈</div>
+        <h2 className="text-big font-black text-slate-800 mb-3 text-center word-keep">
           {soundOn ? <HighlightedText text="오늘 배운 것을 떠올리며 다짐을 말해보세요!" highlightIdx={highlightIdx}/> : '오늘 배운 것을 떠올리며 다짐을 말해보세요!'}
         </h2>
         <VoiceRecorder
@@ -1444,7 +1465,7 @@ const App = () => {
           color="emerald"
         />
         <button onClick={()=>{sfx.click(soundOn); setEndResolution({text:'',audioBase64:null}); setPhase('self_praise')}}
-          className="mt-3 text-slate-300 hover:text-slate-500 underline font-bold text-base-lg">
+          className="mt-2 text-slate-300 hover:text-slate-500 underline font-bold text-base-lg shrink-0">
           넘어가기
         </button>
       </div>
@@ -1464,26 +1485,26 @@ const App = () => {
     return (
       <div className="w-full h-full flex flex-col" style={{background:'#fef3f2'}}>
         <Header label="✨ 스스로 칭찬하기" soundOn={soundOn} toggleSound={toggleSound}/>
-        <div className="flex-1 flex flex-col items-center justify-center px-6 scroll-y">
-          <h2 className="text-big font-black text-slate-800 mb-2 text-center">
+        <div className="flex-1 flex flex-col items-center px-5 pb-3 overflow-hidden">
+          <h2 className="text-big font-black text-slate-800 mb-1 text-center shrink-0 word-keep">
             {soundOn ? <HighlightedText text="내 다짐을 듣고 스스로 칭찬해줘요!" highlightIdx={highlightIdx}/> : '내 다짐을 듣고 스스로 칭찬해줘요!'}
           </h2>
-          <p className="text-mid font-bold text-slate-400 mb-4 italic">노력한 나를 칭찬해주세요!</p>
+          <p className="text-base-lg font-bold text-slate-400 mb-3 italic shrink-0">노력한 나를 칭찬해주세요!</p>
 
           {endResolution.audioBase64 && (
-            <div className="card card-pink p-4 mb-4 w-full max-w-md">
-              <p className="text-base-lg font-black text-pink-500 mb-2">🎙️ 내 다짐 듣기</p>
+            <div className="card card-pink p-3 mb-3 w-full max-w-md shrink-0">
+              <p className="text-base-lg font-black text-pink-500 mb-1">🎙️ 내 다짐 듣기</p>
               <audio controls src={`data:audio/webm;base64,${endResolution.audioBase64}`} className="w-full"/>
-              {endResolution.text && <p className="mt-2 text-mid font-bold text-slate-700 italic">"{endResolution.text}"</p>}
+              {endResolution.text && <p className="mt-1 text-base-lg font-bold text-slate-700 italic word-keep">"{endResolution.text}"</p>}
             </div>
           )}
 
-          <div className="grid grid-cols-3 gap-3 w-full max-w-2xl mb-5">
+          <div className="grid grid-cols-3 gap-2 w-full max-w-2xl mb-3 flex-1 min-h-0 content-center">
             {stickerOptions.map((s,i)=>(
               <button key={i} onClick={()=>{sfx.star(soundOn); setSelfSticker(s.label)}}
-                className={`btn p-4 rounded-3xl border-4 flex flex-col items-center gap-2
+                className={`btn p-3 rounded-3xl border-4 flex flex-col items-center gap-1 justify-center
                   ${selfSticker===s.label?'border-pink-500 bg-pink-50 scale-105':'border-slate-100 bg-white hover:border-pink-300'}`}>
-                <span className="text-5xl">{s.emoji}</span>
+                <span className="text-4xl">{s.emoji}</span>
                 <span className="text-base-lg font-black text-slate-700 word-keep text-center">{s.label}</span>
               </button>
             ))}
@@ -1491,7 +1512,7 @@ const App = () => {
 
           {selfSticker && (
             <button onClick={()=>{sfx.win(soundOn); confetti({particleCount:150,spread:90,origin:{y:.6}}); saveResult();}}
-              className="btn w-full max-w-xs py-5 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl font-black text-big shadow-lg">
+              className="btn w-full max-w-xs py-4 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl font-black text-mid shadow-lg shrink-0 whitespace-nowrap">
               상장 받으러 가기 🏆
             </button>
           )}
@@ -1507,7 +1528,7 @@ const App = () => {
     const accuracy = history.length > 0 ? Math.round(correctCnt/history.length*100) : 0;
 
     return (
-      <div className="w-full h-full flex flex-col px-5 py-3 bg-white relative scroll-y">
+      <div className="w-full h-full flex flex-col bg-white relative overflow-hidden">
         {saving && (
           <div className="absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-50 rounded-[2rem]">
             <div className="w-14 h-14 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin mb-4"/>
@@ -1515,69 +1536,79 @@ const App = () => {
           </div>
         )}
 
-        <div className="text-center mb-2">
-          <div className="text-5xl mb-1 float">🏆</div>
-          <h1 className="text-mega font-black text-slate-900">감정 알기 대장 상장</h1>
-          <p className="text-base-lg font-bold text-slate-400">+ 오늘의 배움 기록표</p>
-        </div>
+        <div className="flex-1 flex flex-col px-5 py-3 overflow-hidden">
+          {/* 제목 - 컴팩트하게 */}
+          <div className="text-center mb-2 shrink-0">
+            <div className="text-4xl mb-1 float">🏆</div>
+            <h1 className="text-big font-black text-slate-900 whitespace-nowrap">감정 알기 대장 상장</h1>
+            <p className="text-base-lg font-bold text-slate-400">+ 오늘의 배움 기록표</p>
+          </div>
 
-        <div className="card card-amber p-5 mb-3 text-center">
-          <h3 className="text-big font-black text-pink-600 mb-2">🌟 {student} 어린이 🌟</h3>
-          <p className="text-mid font-bold text-slate-500 italic mb-3 leading-relaxed word-keep">
-            자신의 감정을 바르게 이해하고 표현하는<br/>멋진 대장이 되었어요!
-          </p>
-          <div className="text-3xl mb-2">{'⭐'.repeat(stars)}{'☆'.repeat(5-stars)}</div>
-          {selfSticker && <p className="text-mid font-black text-pink-600">"{selfSticker}"</p>}
-        </div>
+          {/* 가로 2열: 상장 + 배움기록표 */}
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3 min-h-0 mb-3">
+            {/* 상장 */}
+            <div className="card card-amber p-4 text-center flex flex-col justify-center overflow-hidden">
+              <div className="text-4xl mb-2">🏅</div>
+              <h3 className="text-mid font-black text-pink-600 mb-2 word-keep">🌟 {student} 어린이 🌟</h3>
+              <p className="text-base-lg font-bold text-slate-500 italic mb-2 leading-relaxed word-keep">
+                자신의 감정을 바르게 이해하고<br/>표현하는 멋진 대장이 되었어요!
+              </p>
+              <div className="text-2xl mb-1">{'⭐'.repeat(stars)}{'☆'.repeat(5-stars)}</div>
+              {selfSticker && <p className="text-base-lg font-black text-pink-600 word-keep">"{selfSticker}"</p>}
+            </div>
 
-        <div className="card card-indigo p-5 mb-3">
-          <h3 className="text-big font-black text-indigo-600 mb-3 text-center">📋 오늘의 배움 기록표</h3>
+            {/* 배움기록표 */}
+            <div className="card card-indigo p-4 flex flex-col overflow-hidden">
+              <h3 className="text-mid font-black text-indigo-600 mb-2 text-center whitespace-nowrap">📋 오늘의 배움 기록표</h3>
 
-          <div className="grid grid-cols-4 gap-2 mb-3">
-            <div className="bg-pink-50 rounded-2xl p-3 text-center border-2 border-pink-100">
-              <div className="text-2xl font-black text-pink-600">{history.length}</div>
-              <div className="text-xs font-bold text-slate-500">문제</div>
-            </div>
-            <div className="bg-emerald-50 rounded-2xl p-3 text-center border-2 border-emerald-100">
-              <div className="text-2xl font-black text-emerald-600">{correctCnt}</div>
-              <div className="text-xs font-bold text-slate-500">맞힘</div>
-            </div>
-            <div className="bg-blue-50 rounded-2xl p-3 text-center border-2 border-blue-100">
-              <div className="text-2xl font-black text-blue-600">{accuracy}%</div>
-              <div className="text-xs font-bold text-slate-500">정답률</div>
-            </div>
-            <div className="bg-amber-50 rounded-2xl p-3 text-center border-2 border-amber-100">
-              <div className="text-2xl font-black text-amber-600">{learned.length}</div>
-              <div className="text-xs font-bold text-slate-500">배운 감정</div>
+              <div className="grid grid-cols-4 gap-1 mb-2 shrink-0">
+                <div className="bg-pink-50 rounded-xl p-2 text-center border-2 border-pink-100">
+                  <div className="font-black text-pink-600" style={{fontSize:'1.4rem'}}>{history.length}</div>
+                  <div className="text-xs font-bold text-slate-500">문제</div>
+                </div>
+                <div className="bg-emerald-50 rounded-xl p-2 text-center border-2 border-emerald-100">
+                  <div className="font-black text-emerald-600" style={{fontSize:'1.4rem'}}>{correctCnt}</div>
+                  <div className="text-xs font-bold text-slate-500">맞힘</div>
+                </div>
+                <div className="bg-blue-50 rounded-xl p-2 text-center border-2 border-blue-100">
+                  <div className="font-black text-blue-600" style={{fontSize:'1.4rem'}}>{accuracy}%</div>
+                  <div className="text-xs font-bold text-slate-500">정답률</div>
+                </div>
+                <div className="bg-amber-50 rounded-xl p-2 text-center border-2 border-amber-100">
+                  <div className="font-black text-amber-600" style={{fontSize:'1.4rem'}}>{learned.length}</div>
+                  <div className="text-xs font-bold text-slate-500">배운 감정</div>
+                </div>
+              </div>
+
+              {learned.length > 0 && (
+                <div className="bg-pink-50 rounded-xl p-2 border-2 border-pink-100 flex-1 min-h-0 overflow-y-auto">
+                  <p className="text-base-lg font-black text-pink-600 mb-1">✨ 오늘 배운 감정</p>
+                  <div className="flex flex-wrap gap-1">
+                    {learned.map((id,i)=>{
+                      const em = emotionData.find(e=>e.id===id) || {};
+                      return (
+                        <span key={i} className="bg-white border border-pink-200 rounded-full px-2 py-1 text-base-lg font-black text-slate-700 whitespace-nowrap">
+                          {em.emoji} {id}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {learned.length > 0 && (
-            <div className="bg-pink-50 rounded-2xl p-3 border-2 border-pink-100">
-              <p className="text-base-lg font-black text-pink-600 mb-2">✨ 오늘 배운 감정</p>
-              <div className="flex flex-wrap gap-2">
-                {learned.map((id,i)=>{
-                  const em = emotionData.find(e=>e.id===id) || {};
-                  return (
-                    <span key={i} className="bg-white border border-pink-200 rounded-full px-3 py-1 text-base-lg font-black text-slate-700">
-                      {em.emoji} {id}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="flex gap-3">
-          <button onClick={()=>{sfx.win(soundOn); downloadCertificate(student, learned, stars, history, selfSticker)}}
-            className="btn flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-big shadow-lg">
-            🖼️ 상장+기록표 저장
-          </button>
-          <button onClick={()=>window.location.reload()}
-            className="btn flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-black text-big shadow-lg">
-            🏠 처음으로
-          </button>
+          {/* 버튼 */}
+          <div className="flex gap-3 shrink-0">
+            <button onClick={()=>{sfx.win(soundOn); downloadCertificate(student, learned, stars, history, selfSticker)}}
+              className="btn flex-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-mid shadow-lg whitespace-nowrap">
+              🖼️ 상장+기록표 저장
+            </button>
+            <button onClick={()=>window.location.reload()}
+              className="btn flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-black text-mid shadow-lg whitespace-nowrap">
+              🏠 처음으로
+            </button>
+          </div>
         </div>
       </div>
     );
