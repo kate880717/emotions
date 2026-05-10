@@ -181,17 +181,86 @@ textarea{font-family:'Jua','Gaegu','Malgun Gothic',sans-serif}
 }
 @keyframes pop-up{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
 
-/* 사분면 색깔 배지 */
+/* 사분면 색깔 배지 - 클릭 가능 강조 */
 .quad-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:10px 22px;border-radius:999px;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 26px;border-radius:999px;
   font-size:1.5rem;font-weight:900;
-  border:3px solid;
+  border:4px solid;
+  cursor:pointer;
+  position:relative;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  animation:badge-bounce 2s ease-in-out infinite;
 }
+.quad-badge:hover{
+  transform:translateY(-4px) scale(1.05);
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+}
+.quad-badge:active{
+  transform:translateY(-2px) scale(1.02);
+}
+.quad-badge::after{
+  content:'';
+  position:absolute;
+  inset:-4px;
+  border-radius:999px;
+  border:4px solid currentColor;
+  opacity:.4;
+  animation:badge-ring 2s ease-out infinite;
+  pointer-events:none;
+}
+@keyframes badge-bounce{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+@keyframes badge-ring{
+  0%{transform:scale(1);opacity:.5}
+  100%{transform:scale(1.15);opacity:0}
+}
+
 .quad-badge-red{background:#fee2e2;color:#b91c1c;border-color:#ef4444}
 .quad-badge-yellow{background:#fef3c7;color:#b45309;border-color:#f59e0b}
 .quad-badge-blue{background:#dbeafe;color:#1d4ed8;border-color:#3b82f6}
 .quad-badge-green{background:#d1fae5;color:#047857;border-color:#10b981}
+
+/* 클릭 안내 텍스트 - 위에 떠있는 말풍선 */
+.click-hint{
+  position:relative;
+  display:inline-block;
+}
+.click-hint::before{
+  content:'👆 눌러보세요!';
+  position:absolute;
+  bottom:calc(100% + 8px);
+  left:50%;
+  transform:translateX(-50%);
+  background:#1e293b;
+  color:white;
+  padding:6px 14px;
+  border-radius:999px;
+  font-size:.95rem;
+  font-weight:bold;
+  white-space:nowrap;
+  animation:hint-bounce 1.5s ease-in-out infinite;
+  z-index:1;
+}
+.click-hint::after{
+  content:'';
+  position:absolute;
+  bottom:calc(100% + 2px);
+  left:50%;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:8px solid transparent;
+  border-right:8px solid transparent;
+  border-top:8px solid #1e293b;
+  animation:hint-bounce 1.5s ease-in-out infinite;
+}
+@keyframes hint-bounce{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-4px)}
+}
 </style>
 <script>
 /* ── GAS 웹앱 URL ──────────────────────────────────── */
@@ -1214,7 +1283,7 @@ const App = () => {
             <h2 className="text-big font-black text-slate-800 mb-1">
               {soundOn ? <HighlightedText text="우리 마음에는 네 가지 색깔이 있어요!" highlightIdx={highlightIdx}/> : '우리 마음에는 네 가지 색깔이 있어요!'}
             </h2>
-            <p className="text-base-lg font-bold text-slate-500 italic">눌러보면 어떤 감정들이 있는지 볼 수 있어요!</p>
+            <p className="text-base-lg font-bold text-pink-500" style={{fontWeight:900}}>👆 카드를 눌러서 어떤 감정들이 있는지 확인해보세요!</p>
           </div>
 
           <div className="flex-1 grid grid-cols-2 gap-3 min-h-0">
@@ -1232,8 +1301,8 @@ const App = () => {
                   <div style={{fontSize:'clamp(3rem,6vw,4.5rem)', lineHeight:1, marginBottom:'10px'}}>{q.icon}</div>
                   <div style={{color: q.textColor, fontSize:'clamp(1.4rem,2.6vw,2rem)', fontWeight:900, whiteSpace:'nowrap'}}>{q.title}</div>
                   <div style={{color: q.textColor, fontSize:'clamp(1rem,1.8vw,1.3rem)', fontWeight:'bold', marginTop:'6px', marginBottom:'10px', whiteSpace:'nowrap'}}>{q.sub}</div>
-                  <div className="bg-white/70 rounded-full px-4 py-2 font-black text-slate-700 whitespace-nowrap" style={{fontSize:'clamp(.9rem,1.6vw,1.1rem)'}}>
-                    감정 {count}개 보기 🔍
+                  <div className="bg-white rounded-full px-5 py-2 font-black text-slate-700 whitespace-nowrap shadow-md" style={{fontSize:'clamp(.95rem,1.7vw,1.15rem)',border:'2px solid '+q.textColor}}>
+                    👉 감정 {count}개 보러 가기
                   </div>
                 </button>
               );
@@ -1263,12 +1332,15 @@ const App = () => {
           <Header label={`💡 감정 배우기 ${conceptIdx+1}/${conceptList.length}`} soundOn={soundOn} toggleSound={toggleSound}/>
           <div className="flex-1 flex flex-col px-5 pb-4 overflow-hidden">
             <div className="card card-indigo flex-1 p-6 flex flex-col items-center text-center justify-center min-h-0 mb-3">
-              <button onClick={()=>openMoodModal(em.quad, em)}
-                className={`quad-badge quad-badge-${em.quad} btn mb-4`}>
-                <span className="text-3xl">{quadInfo.emoji}</span>
-                <span>{quadInfo.name}</span>
-                <span className="text-xl opacity-60">🔍 마음지도</span>
-              </button>
+              {/* 마음지도 버튼 - 강조 */}
+              <div className="click-hint mb-5">
+                <button onClick={()=>openMoodModal(em.quad, em)}
+                  className={`quad-badge quad-badge-${em.quad}`}>
+                  <span style={{fontSize:'1.8rem'}}>{quadInfo.emoji}</span>
+                  <span>{quadInfo.name}</span>
+                  <span style={{fontSize:'1.1rem',background:'white',padding:'4px 10px',borderRadius:'999px'}}>🗺️ 마음지도</span>
+                </button>
+              </div>
 
               <div className="bg-indigo-50 border-3 border-indigo-200 rounded-2xl p-5 mb-4 w-full max-w-2xl">
                 <p className="text-base-lg font-black text-slate-500 mb-2">📍 이런 상황이 있어요</p>
@@ -1335,12 +1407,14 @@ const App = () => {
                   <h2 className="font-black mb-4 text-emerald-500" style={{fontSize:'clamp(2.4rem,5vw,3.6rem)'}}>정답이에요!</h2>
 
                   {ansEmotion && ansQuadInfo && (
-                    <button onClick={()=>openMoodModal(ansEmotion.quad, ansEmotion)}
-                      className={`quad-badge quad-badge-${ansEmotion.quad} btn mb-4`}>
-                      <span className="text-3xl">{ansQuadInfo.emoji}</span>
-                      <span>{ansQuadInfo.name}</span>
-                      <span className="text-xl opacity-60">🔍 마음지도</span>
-                    </button>
+                    <div className="click-hint mb-4">
+                      <button onClick={()=>openMoodModal(ansEmotion.quad, ansEmotion)}
+                        className={`quad-badge quad-badge-${ansEmotion.quad}`}>
+                        <span style={{fontSize:'1.8rem'}}>{ansQuadInfo.emoji}</span>
+                        <span>{ansQuadInfo.name}</span>
+                        <span style={{fontSize:'1.1rem',background:'white',padding:'4px 10px',borderRadius:'999px'}}>🗺️ 마음지도</span>
+                      </button>
+                    </div>
                   )}
 
                   <div className="bg-emerald-50 border-3 border-emerald-200 rounded-2xl p-5 mb-5 max-w-3xl">
